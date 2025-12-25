@@ -10,7 +10,7 @@ import base64
 import io
 from datetime import datetime
 
-# Initialize app with external stylesheets
+# Initialize app
 app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,
@@ -85,7 +85,9 @@ SECTION_HEADER_STYLE = {
     'gap': '10px'
 }
 
-# App layout
+
+# ============== APP LAYOUT ==============
+
 app.layout = html.Div([
     # Navigation Bar
     html.Nav([
@@ -561,7 +563,6 @@ def create_category_chart(df):
     problem = df[df['stock_status'].isin(['Dead Stock (6+ months)', 'Slow Moving (3-6 months)'])]
     
     if len(problem) == 0:
-        # Return empty chart if no problem stock
         fig = go.Figure()
         fig.add_annotation(
             text="No problem stock found! 🎉",
@@ -570,11 +571,7 @@ def create_category_chart(df):
             showarrow=False,
             xref="paper", yref="paper"
         )
-        fig.update_layout(
-            height=320,
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
+        fig.update_layout(height=320, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
         return fig
     
     cat_summary = problem.groupby('category')['stock_value'].sum().sort_values(ascending=True).reset_index()
@@ -615,7 +612,7 @@ def create_category_chart(df):
 
 
 def create_aging_chart(df):
-    """Professional scatter plot"""
+    """Professional scatter plot with fixed legend positioning"""
     fig = px.scatter(
         df,
         x='days_since_last_sale',
@@ -647,8 +644,8 @@ def create_aging_chart(df):
         line_dash="dash",
         line_color=COLORS['danger'],
         line_width=2,
-        annotation_text="Dead Stock Zone",
-        annotation_position="top",
+        annotation_text="⚠️ Dead Stock Zone",
+        annotation_position="top left",
         annotation_font=dict(size=11, color=COLORS['danger'])
     )
     
@@ -665,74 +662,208 @@ def create_aging_chart(df):
         font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=-0.2,
+            yanchor="top",
+            y=-0.15,
             xanchor="center",
             x=0.5,
             title="",
             font=dict(size=11)
         ),
-        margin=dict(t=30, b=80, l=70, r=30),
-        height=400,
+        margin=dict(t=30, b=100, l=70, r=30),
+        height=450,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(gridcolor=COLORS['border_light'], zerolinecolor=COLORS['border']),
-        yaxis=dict(gridcolor=COLORS['border_light'], zerolinecolor=COLORS['border'])
+        xaxis=dict(
+            gridcolor=COLORS['border_light'], 
+            zerolinecolor=COLORS['border'],
+            range=[0, max_days + 30]
+        ),
+        yaxis=dict(
+            gridcolor=COLORS['border_light'], 
+            zerolinecolor=COLORS['border']
+        )
     )
     
     return fig
 
 
-def create_velocity_histogram(df):
-    """Monthly velocity distribution chart"""
+def create_worst_products_chart(df):
+    """Top 10 products with highest dead stock value - actionable insight"""
+    dead = df[df['stock_status'] == 'Dead Stock (6+ months)'].nlargest(10, 'stock_value')
+    
+    if len(dead) == 0:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="🎉 No dead stock found!",
+            x=0.5, y=0.5,
+            font=dict(size=18, color=COLORS['success']),
+            showarrow=False,
+            xref="paper", yref="paper"
+        )
+        fig.add_annotation(
+            text="Your inventory is healthy",
+            x=0.5, y=0.4,
+            font=dict(size=13, color=COLORS['text_muted']),
+            showarrow=False,
+            xref="paper", yref="paper"
+        )
+        fig.update_layout(
+            height=350, 
+            paper_bgcolor='rgba(0,0,0,0)', 
+            plot_bgcolor='rgba(0,0,0,0)'
+        )
+        return fig
+    
+    # Truncate long product names
+    dead['short_name'] = dead['product_name'].apply(
+        lambda x: x[:30] + '...' if len(str(x)) > 30 else x
+    )
+    
     fig = go.Figure()
     
-    status_order = [
-        'Active (< 1 month)',
-        'Moderate (1-3 months)',
-        'Slow Moving (3-6 months)',
-        'Dead Stock (6+ months)'
-    ]
+    fig.add_trace(go.Bar(
+        x=dead['stock_value'],
+        y=dead['short_name'],
+        orientation='h',
+        marker=dict(
+            color=dead['days_since_last_sale'],
+            colorscale=[[0, COLORS['warning']], [1, COLORS['danger']]],
+            line=dict(width=0),
+            colorbar=dict(
+                title=dict(text="Days Idle", font=dict(size=11)),
+                thickness=15,
+                len=0.6
+            )
+        ),
+        text=[f"P{v:,.0f}" for v in dead['stock_value']],
+        textposition='outside',
+        textfont=dict(size=11, color=COLORS['text_secondary']),
+        hovertemplate="<b>%{y}</b><br>Value: P%{x:,.0f}<br>Days idle: %{marker.color}<extra></extra>"
+    ))
     
-    for status in status_order:
-        data = df[df['stock_status'] == status]['monthly_velocity']
-        if len(data) > 0:
-            fig.add_trace(go.Histogram(
-                x=data,
-                name=status.split('(')[0].strip(),
-                marker=dict(
-                    color=STATUS_COLORS[status],
-                    line=dict(width=1, color='white')
-                ),
-                opacity=0.75,
-                nbinsx=20
-            ))
+    fig.update_layout(
+        xaxis_title="Stock Value (Pula)",
+        yaxis_title="",
+        font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
+        margin=dict(t=20, b=50, l=180, r=80),
+        height=380,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(
+            gridcolor=COLORS['border_light'],
+            zerolinecolor=COLORS['border']
+        ),
+        yaxis=dict(
+            gridcolor='rgba(0,0,0,0)',
+            autorange='reversed'
+        ),
+        bargap=0.35
+    )
+    
+    return fig
+
+
+def create_cash_recovery_chart(df):
+    """Shows potential cash recovery from clearing dead stock"""
+    
+    dead = df[df['stock_status'] == 'Dead Stock (6+ months)']
+    
+    if len(dead) == 0:
+        fig = go.Figure()
+        fig.add_annotation(
+            text="🎉 No dead stock to recover!",
+            x=0.5, y=0.5,
+            font=dict(size=18, color=COLORS['success']),
+            showarrow=False,
+            xref="paper", yref="paper"
+        )
+        fig.update_layout(
+            height=320, 
+            paper_bgcolor='rgba(0,0,0,0)', 
+            plot_bgcolor='rgba(0,0,0,0)'
+        )
+        return fig
+    
+    cat_summary = dead.groupby('category').agg({
+        'stock_value': 'sum',
+        'sku': 'count'
+    }).reset_index()
+    cat_summary.columns = ['category', 'value', 'count']
+    cat_summary = cat_summary.sort_values('value', ascending=False)
+    
+    # Truncate long category names
+    cat_summary['short_category'] = cat_summary['category'].apply(
+        lambda x: x[:15] + '...' if len(str(x)) > 15 else x
+    )
+    
+    # Calculate recovery scenarios
+    cat_summary['full_price'] = cat_summary['value']
+    cat_summary['half_price'] = cat_summary['value'] * 0.5
+    cat_summary['clearance'] = cat_summary['value'] * 0.25
+    
+    fig = go.Figure()
+    
+    # Full price recovery
+    fig.add_trace(go.Bar(
+        name='Full Price',
+        x=cat_summary['short_category'],
+        y=cat_summary['full_price'],
+        marker=dict(color=COLORS['text_muted'], line=dict(width=0)),
+        opacity=0.4,
+        hovertemplate="<b>%{x}</b><br>Full: P%{y:,.0f}<extra></extra>"
+    ))
+    
+    # 50% recovery
+    fig.add_trace(go.Bar(
+        name='50% Off',
+        x=cat_summary['short_category'],
+        y=cat_summary['half_price'],
+        marker=dict(color=COLORS['warning'], line=dict(width=0)),
+        hovertemplate="<b>%{x}</b><br>50% Off: P%{y:,.0f}<extra></extra>"
+    ))
+    
+    # Clearance recovery
+    fig.add_trace(go.Bar(
+        name='75% Off',
+        x=cat_summary['short_category'],
+        y=cat_summary['clearance'],
+        marker=dict(color=COLORS['success'], line=dict(width=0)),
+        hovertemplate="<b>%{x}</b><br>Clearance: P%{y:,.0f}<extra></extra>"
+    ))
     
     fig.update_layout(
         barmode='overlay',
-        xaxis_title="Units Sold per Month",
-        yaxis_title="Number of Products",
+        xaxis_title="",
+        yaxis_title="Recovery (Pula)",
         font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
         legend=dict(
             orientation="h",
-            yanchor="bottom",
-            y=-0.25,
+            yanchor="top",
+            y=1.12,
             xanchor="center",
             x=0.5,
-            font=dict(size=10)
+            font=dict(size=10),
+            bgcolor='rgba(255,255,255,0.8)'
         ),
-        margin=dict(t=20, b=80, l=60, r=30),
-        height=320,
+        margin=dict(t=60, b=80, l=60, r=30),
+        height=380,
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(gridcolor=COLORS['border_light']),
-        yaxis=dict(gridcolor=COLORS['border_light'])
+        xaxis=dict(
+            gridcolor='rgba(0,0,0,0)',
+            tickangle=-35,
+            tickfont=dict(size=10)
+        ),
+        yaxis=dict(
+            gridcolor=COLORS['border_light']
+        ),
+        bargap=0.4
     )
     
     return fig
 
 
-# ============== TABLE COMPONENTS ==============
+# ============== TABLE COMPONENT ==============
 
 def create_priority_table(df):
     """Professional data table"""
@@ -1029,7 +1160,7 @@ def update_dashboard(contents, n_clicks, filename):
             # KPI Cards
             create_kpi_section(df),
             
-            # Charts Row 1
+            # Charts Row 1: Donut + Category Bar
             html.Div([
                 html.Div([
                     html.Div([
@@ -1059,7 +1190,7 @@ def update_dashboard(contents, n_clicks, filename):
                 'marginBottom': '24px'
             }),
             
-            # Aging Analysis Chart
+            # Aging Analysis Chart (Full Width)
             html.Div([
                 html.Div([
                     html.Span("📅", style={'marginRight': '8px'}),
@@ -1071,17 +1202,35 @@ def update_dashboard(contents, n_clicks, filename):
                 )
             ], style={**CARD_STYLE, 'padding': '24px', 'marginBottom': '24px'}),
             
-            # Velocity Chart
+            # Charts Row 2: Worst Products + Cash Recovery
             html.Div([
                 html.Div([
-                    html.Span("⚡", style={'marginRight': '8px'}),
-                    "Inventory Velocity"
-                ], style=SECTION_HEADER_STYLE),
-                dcc.Graph(
-                    figure=create_velocity_histogram(df),
-                    config={'displayModeBar': False}
-                )
-            ], style={**CARD_STYLE, 'padding': '24px', 'marginBottom': '24px'}),
+                    html.Div([
+                        html.Span("🔥", style={'marginRight': '8px'}),
+                        "Top 10 Dead Stock Items"
+                    ], style=SECTION_HEADER_STYLE),
+                    dcc.Graph(
+                        figure=create_worst_products_chart(df),
+                        config={'displayModeBar': False}
+                    )
+                ], style={**CARD_STYLE, 'padding': '24px'}),
+                
+                html.Div([
+                    html.Div([
+                        html.Span("💵", style={'marginRight': '8px'}),
+                        "Potential Cash Recovery"
+                    ], style=SECTION_HEADER_STYLE),
+                    dcc.Graph(
+                        figure=create_cash_recovery_chart(df),
+                        config={'displayModeBar': False}
+                    )
+                ], style={**CARD_STYLE, 'padding': '24px'})
+            ], style={
+                'display': 'grid',
+                'gridTemplateColumns': 'repeat(auto-fit, minmax(400px, 1fr))',
+                'gap': '24px',
+                'marginBottom': '24px'
+            }),
             
             # Priority Table
             html.Div([
