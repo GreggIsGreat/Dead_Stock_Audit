@@ -3,60 +3,271 @@ from dash import dcc, html, dash_table, callback_context
 from dash.dependencies import Input, Output, State
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 import base64
 import io
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
 
-# Initialize app
+# ============== DATA GENERATOR (EMBEDDED) ==============
+
+def generate_spaza_inventory(num_products=120, seed=42):
+    """Generate realistic Spaza Shop inventory data for Botswana"""
+    
+    np.random.seed(seed)
+    random.seed(seed)
+    
+    categories = {
+        'Groceries': {
+            'price_range': (8, 120),
+            'holding_cost_pct': 0.02,
+            'seasonality': [12, 1, 4],
+            'products': [
+                ('Maize Meal 2.5kg', 'White Star'),
+                ('Maize Meal 5kg', 'White Star'),
+                ('Cooking Oil 750ml', 'Sunfoil'),
+                ('Cooking Oil 2L', 'Golden Fry'),
+                ('Sugar 2kg', 'White'),
+                ('Sugar 1kg', 'Brown'),
+                ('Rice 2kg', 'Tastic'),
+                ('Flour 2.5kg', 'Snowflake'),
+                ('Salt 500g', 'Cerebos'),
+                ('Tea 100 bags', 'Five Roses'),
+                ('Coffee 200g', 'Ricoffy'),
+                ('Beans 410g', 'KOO'),
+                ('Pilchards 400g', 'Lucky Star'),
+                ('Tomato Sauce 700ml', 'All Gold'),
+                ('Peanut Butter 400g', 'Black Cat'),
+            ]
+        },
+        'Beverages': {
+            'price_range': (5, 35),
+            'holding_cost_pct': 0.015,
+            'seasonality': [10, 11, 12, 1, 2],
+            'products': [
+                ('Coca Cola 2L', 'Coke'),
+                ('Coca Cola 500ml', 'Coke'),
+                ('Fanta Orange 2L', 'Fanta'),
+                ('Sprite 500ml', 'Sprite'),
+                ('Oros 2L', 'Orange'),
+                ('Juice 1L', 'Ceres Apple'),
+                ('Water 500ml', 'Bonaqua'),
+                ('Water 5L', 'Aquartz'),
+                ('Milk 1L', 'Clover Fresh'),
+            ]
+        },
+        'Snacks': {
+            'price_range': (3, 25),
+            'holding_cost_pct': 0.01,
+            'seasonality': [3, 4, 6, 7, 12],
+            'products': [
+                ('Chips 125g', 'Simba Chutney'),
+                ('Chips 125g', 'Lays Salt'),
+                ('Chips 36g', 'Nik Naks'),
+                ('Biscuits', 'Marie'),
+                ('Biscuits', 'Tennis'),
+                ('Chocolate', 'Cadbury'),
+                ('Sweets', 'Jelly Babies'),
+                ('Popcorn', 'Act II'),
+            ]
+        },
+        'Personal Care': {
+            'price_range': (12, 85),
+            'holding_cost_pct': 0.012,
+            'seasonality': [1, 2, 9],
+            'products': [
+                ('Soap', 'Sunlight Bar'),
+                ('Soap', 'Lux'),
+                ('Toothpaste 100ml', 'Colgate'),
+                ('Lotion 400ml', 'Vaseline'),
+                ('Deodorant', 'Shield'),
+                ('Shampoo 400ml', 'Sunsilk'),
+                ('Sanitary Pads', 'Always'),
+            ]
+        },
+        'Household': {
+            'price_range': (8, 65),
+            'holding_cost_pct': 0.008,
+            'seasonality': [1, 4, 12],
+            'products': [
+                ('Candles 6 pack', 'White'),
+                ('Matches Box', 'Lion'),
+                ('Washing Powder 1kg', 'Omo'),
+                ('Dish Soap 750ml', 'Sunlight'),
+                ('Bleach 750ml', 'Jik'),
+                ('Toilet Paper 2pk', 'Twinsaver'),
+                ('Batteries AA 4pk', 'Eveready'),
+            ]
+        },
+        'Airtime': {
+            'price_range': (5, 100),
+            'holding_cost_pct': 0.005,
+            'seasonality': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            'products': [
+                ('Airtime P5', 'Mascom'),
+                ('Airtime P10', 'Mascom'),
+                ('Airtime P25', 'Mascom'),
+                ('Airtime P50', 'Orange'),
+                ('Data Bundle P20', 'Mascom'),
+            ]
+        },
+        'Bread & Bakery': {
+            'price_range': (8, 35),
+            'holding_cost_pct': 0.04,
+            'seasonality': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            'products': [
+                ('Bread White', 'Albany'),
+                ('Bread Brown', 'Albany'),
+                ('Rolls 6 pack', 'Hot Dog'),
+            ]
+        },
+    }
+    
+    movement_types = ['fast', 'medium', 'slow', 'dead']
+    movement_weights = [0.30, 0.35, 0.20, 0.15]
+    
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=365)
+    
+    products = []
+    sku_counter = 1
+    
+    for category, cat_info in categories.items():
+        for product_name, variant in cat_info['products']:
+            sku = f"SPZ-{category[:3].upper()}-{str(sku_counter).zfill(4)}"
+            sku_counter += 1
+            
+            full_name = f"{product_name} ({variant})"
+            
+            unit_cost = round(random.uniform(*cat_info['price_range']), 2)
+            markup = random.uniform(1.15, 1.45)
+            unit_price = round(unit_cost * markup, 2)
+            
+            if category in ['Airtime', 'Bread & Bakery']:
+                movement = random.choices(['fast', 'medium'], [0.7, 0.3])[0]
+            else:
+                movement = random.choices(movement_types, movement_weights)[0]
+            
+            if movement == 'dead':
+                stock_date = start_date + timedelta(days=random.randint(0, 180))
+            else:
+                stock_date = start_date + timedelta(days=random.randint(0, 300))
+            
+            if movement == 'fast':
+                initial_qty = random.randint(30, 100)
+            elif movement == 'medium':
+                initial_qty = random.randint(20, 60)
+            elif movement == 'slow':
+                initial_qty = random.randint(10, 40)
+            else:
+                initial_qty = random.randint(10, 50)
+            
+            remaining_qty = initial_qty
+            current_date = stock_date
+            last_sale_date = stock_date
+            
+            while current_date < end_date and remaining_qty > 0:
+                if movement == 'fast':
+                    days_gap = random.randint(1, 4)
+                    sale_qty = random.randint(3, 15)
+                elif movement == 'medium':
+                    days_gap = random.randint(3, 14)
+                    sale_qty = random.randint(2, 8)
+                elif movement == 'slow':
+                    days_gap = random.randint(10, 35)
+                    sale_qty = random.randint(1, 4)
+                else:
+                    if random.random() < 0.15:
+                        days_gap = random.randint(45, 100)
+                        sale_qty = random.randint(1, 2)
+                    else:
+                        break
+                
+                current_date += timedelta(days=days_gap)
+                
+                if current_date.month in cat_info['seasonality']:
+                    sale_qty = int(sale_qty * random.uniform(1.3, 2.0))
+                
+                sale_qty = min(sale_qty, remaining_qty)
+                
+                if current_date < end_date and sale_qty > 0:
+                    last_sale_date = current_date
+                    remaining_qty -= sale_qty
+            
+            total_sold = initial_qty - remaining_qty
+            days_since_last_sale = (end_date - last_sale_date).days
+            days_in_stock = (end_date - stock_date).days
+            
+            months_held = days_in_stock / 30
+            holding_cost = round(remaining_qty * unit_cost * cat_info['holding_cost_pct'] * months_held, 2)
+            
+            stock_value = round(remaining_qty * unit_cost, 2)
+            velocity = round((total_sold / max(days_in_stock, 1)) * 30, 2)
+            
+            products.append({
+                'sku': sku,
+                'product_name': full_name,
+                'category': category,
+                'unit_cost': unit_cost,
+                'unit_price': unit_price,
+                'initial_quantity': initial_qty,
+                'current_stock': remaining_qty,
+                'total_sold': total_sold,
+                'stock_received_date': stock_date.strftime('%Y-%m-%d'),
+                'last_sale_date': last_sale_date.strftime('%Y-%m-%d'),
+                'days_since_last_sale': days_since_last_sale,
+                'days_in_stock': days_in_stock,
+                'monthly_velocity': velocity,
+                'stock_value': stock_value,
+                'holding_cost': holding_cost,
+                'movement_category': movement
+            })
+    
+    df = pd.DataFrame(products)
+    
+    df['stock_status'] = df['days_since_last_sale'].apply(
+        lambda x: 'Dead Stock (6+ months)' if x > 180 else
+                  'Slow Moving (3-6 months)' if x > 90 else
+                  'Moderate (1-3 months)' if x > 30 else
+                  'Active (< 1 month)'
+    )
+    
+    df['urgency_score'] = df.apply(lambda row: min(
+        (row['days_since_last_sale'] / 5) +
+        (30 if row['stock_value'] > 500 else 20 if row['stock_value'] > 200 else 10 if row['stock_value'] > 50 else 0) +
+        (30 if row['holding_cost'] > 50 else 20 if row['holding_cost'] > 20 else 10 if row['holding_cost'] > 10 else 0),
+        100
+    ), axis=1)
+    
+    df['action_required'] = df['stock_status'].apply(
+        lambda x: 'Clearance Sale' if x == 'Dead Stock (6+ months)' else
+                  'Discount / Promote' if x == 'Slow Moving (3-6 months)' else
+                  'Monitor' if x == 'Moderate (1-3 months)' else 'Restock'
+    )
+    
+    return df
+
+
+# ============== DASH APP ==============
+
 app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,
-    meta_tags=[
-        {"name": "viewport", "content": "width=device-width, initial-scale=1.0"}
-    ]
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1.0"}]
 )
+
+# IMPORTANT: Expose server for Vercel
 server = app.server
 
-# Professional color palette
+# Colors
 COLORS = {
-    # Status colors
-    'dead': '#dc3545',
-    'slow': '#fd7e14',
-    'moderate': '#0dcaf0',
-    'active': '#198754',
-    
-    # UI colors
-    'primary': '#0d6efd',
-    'secondary': '#6c757d',
-    'dark': '#212529',
-    'light': '#f8f9fa',
-    'white': '#ffffff',
-    
-    # Backgrounds
-    'bg_primary': '#0f172a',
-    'bg_secondary': '#1e293b',
-    'bg_card': '#ffffff',
-    'bg_page': '#f1f5f9',
-    
-    # Accents
-    'accent': '#3b82f6',
-    'accent_light': '#60a5fa',
-    'success': '#10b981',
-    'warning': '#f59e0b',
-    'danger': '#ef4444',
-    
-    # Text
-    'text_primary': '#1e293b',
-    'text_secondary': '#64748b',
-    'text_muted': '#94a3b8',
-    'text_white': '#ffffff',
-    
-    # Borders
-    'border': '#e2e8f0',
-    'border_light': '#f1f5f9'
+    'dead': '#dc3545', 'slow': '#fd7e14', 'moderate': '#0dcaf0', 'active': '#198754',
+    'primary': '#0d6efd', 'secondary': '#6c757d', 'white': '#ffffff',
+    'bg_primary': '#0f172a', 'bg_secondary': '#1e293b', 'bg_page': '#f1f5f9',
+    'accent': '#3b82f6', 'success': '#10b981', 'warning': '#f59e0b', 'danger': '#ef4444',
+    'text_primary': '#1e293b', 'text_secondary': '#64748b', 'text_muted': '#94a3b8',
+    'text_white': '#ffffff', 'border': '#e2e8f0', 'border_light': '#f1f5f9'
 }
 
 STATUS_COLORS = {
@@ -66,7 +277,6 @@ STATUS_COLORS = {
     'Active (< 1 month)': COLORS['active']
 }
 
-# Reusable styles
 CARD_STYLE = {
     'background': COLORS['white'],
     'borderRadius': '16px',
@@ -76,1212 +286,185 @@ CARD_STYLE = {
 }
 
 SECTION_HEADER_STYLE = {
-    'fontSize': '18px',
-    'fontWeight': '600',
-    'color': COLORS['text_primary'],
-    'marginBottom': '20px',
-    'display': 'flex',
-    'alignItems': 'center',
-    'gap': '10px'
+    'fontSize': '18px', 'fontWeight': '600', 'color': COLORS['text_primary'],
+    'marginBottom': '20px', 'display': 'flex', 'alignItems': 'center', 'gap': '10px'
 }
 
 
-# ============== APP LAYOUT ==============
+# ============== LAYOUT ==============
 
 app.layout = html.Div([
-    # Navigation Bar
+    # Nav
     html.Nav([
         html.Div([
-            # Logo and brand
             html.Div([
-                html.Div([
-                    html.Span("📦", style={'fontSize': '24px'})
-                ], style={
-                    'width': '44px',
-                    'height': '44px',
+                html.Div([html.Span("📦", style={'fontSize': '24px'})], style={
+                    'width': '44px', 'height': '44px',
                     'background': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
-                    'borderRadius': '12px',
-                    'display': 'flex',
-                    'alignItems': 'center',
-                    'justifyContent': 'center'
+                    'borderRadius': '12px', 'display': 'flex',
+                    'alignItems': 'center', 'justifyContent': 'center'
                 }),
                 html.Div([
-                    html.H1("StockAudit", style={
-                        'margin': '0',
-                        'fontSize': '20px',
-                        'fontWeight': '700',
-                        'color': COLORS['text_white']
-                    }),
-                    html.Span("Spaza Shop Edition", style={
-                        'fontSize': '11px',
-                        'color': COLORS['text_muted'],
-                        'textTransform': 'uppercase',
-                        'letterSpacing': '0.5px'
-                    })
+                    html.H1("StockAudit", style={'margin': '0', 'fontSize': '20px', 'fontWeight': '700', 'color': COLORS['text_white']}),
+                    html.Span("Spaza Shop Edition", style={'fontSize': '11px', 'color': COLORS['text_muted'], 'textTransform': 'uppercase'})
                 ])
             ], style={'display': 'flex', 'alignItems': 'center', 'gap': '12px'}),
-            
-            # Right side - Botswana flag indicator
-            html.Div([
-                html.Div([
-                    html.Span("🇧🇼", style={'fontSize': '20px'}),
-                    html.Span("BWP", style={
-                        'fontSize': '12px',
-                        'fontWeight': '600',
-                        'color': COLORS['text_muted']
-                    })
-                ], style={'display': 'flex', 'alignItems': 'center', 'gap': '6px'})
-            ])
-        ], style={
-            'maxWidth': '1400px',
-            'margin': '0 auto',
-            'padding': '0 24px',
-            'display': 'flex',
-            'justifyContent': 'space-between',
-            'alignItems': 'center',
-            'height': '70px'
-        })
-    ], style={
-        'background': COLORS['bg_primary'],
-        'borderBottom': f'1px solid {COLORS["bg_secondary"]}',
-        'position': 'sticky',
-        'top': '0',
-        'zIndex': '1000'
-    }),
+            html.Div([html.Span("🇧🇼", style={'fontSize': '20px'}), html.Span("BWP", style={'fontSize': '12px', 'fontWeight': '600', 'color': COLORS['text_muted'], 'marginLeft': '6px'})], style={'display': 'flex', 'alignItems': 'center'})
+        ], style={'maxWidth': '1400px', 'margin': '0 auto', 'padding': '0 24px', 'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center', 'height': '70px'})
+    ], style={'background': COLORS['bg_primary'], 'borderBottom': f'1px solid {COLORS["bg_secondary"]}'}),
     
-    # Main content wrapper
+    # Upload Section
     html.Div([
-        # Hero Upload Section
         html.Div([
+            html.H2("Identify Dead Stock Instantly", style={'fontSize': '28px', 'fontWeight': '700', 'color': COLORS['text_primary'], 'marginBottom': '12px', 'textAlign': 'center'}),
+            html.P("Upload your inventory or load demo data to discover trapped cash.", style={'fontSize': '16px', 'color': COLORS['text_secondary'], 'textAlign': 'center', 'marginBottom': '24px'}),
             html.Div([
-                # Left side - Info
-                html.Div([
-                    html.Div([
-                        html.Span("NEW", style={
-                            'background': COLORS['success'],
-                            'color': 'white',
-                            'padding': '4px 10px',
-                            'borderRadius': '20px',
-                            'fontSize': '10px',
-                            'fontWeight': '700',
-                            'letterSpacing': '0.5px'
-                        })
-                    ], style={'marginBottom': '16px'}),
-                    
-                    html.H2("Identify Dead Stock Instantly", style={
-                        'fontSize': '32px',
-                        'fontWeight': '700',
-                        'color': COLORS['text_primary'],
-                        'marginBottom': '12px',
-                        'lineHeight': '1.2'
-                    }),
-                    
-                    html.P(
-                        "Upload your inventory data and discover how much cash is trapped in slow-moving stock. "
-                        "Get actionable insights to free up capital and grow your spaza shop.",
-                        style={
-                            'fontSize': '16px',
-                            'color': COLORS['text_secondary'],
-                            'lineHeight': '1.6',
-                            'marginBottom': '24px'
-                        }
-                    ),
-                    
-                    # Feature bullets
-                    html.Div([
-                        html.Div([
-                            html.Span("✓", style={
-                                'color': COLORS['success'],
-                                'fontWeight': '700',
-                                'marginRight': '10px'
-                            }),
-                            "Automatic stock classification"
-                        ], style={'marginBottom': '8px', 'color': COLORS['text_secondary']}),
-                        html.Div([
-                            html.Span("✓", style={
-                                'color': COLORS['success'],
-                                'fontWeight': '700',
-                                'marginRight': '10px'
-                            }),
-                            "Holding cost calculation"
-                        ], style={'marginBottom': '8px', 'color': COLORS['text_secondary']}),
-                        html.Div([
-                            html.Span("✓", style={
-                                'color': COLORS['success'],
-                                'fontWeight': '700',
-                                'marginRight': '10px'
-                            }),
-                            "Priority action recommendations"
-                        ], style={'color': COLORS['text_secondary']})
-                    ])
-                ], style={'flex': '1', 'paddingRight': '40px'}),
-                
-                # Right side - Upload card
-                html.Div([
-                    html.Div([
-                        html.Div([
-                            html.Span("📤", style={'fontSize': '32px', 'marginBottom': '12px', 'display': 'block'}),
-                            html.P("Upload Inventory CSV", style={
-                                'fontSize': '16px',
-                                'fontWeight': '600',
-                                'color': COLORS['text_primary'],
-                                'marginBottom': '4px'
-                            }),
-                            html.P("Drag & drop or click to browse", style={
-                                'fontSize': '13px',
-                                'color': COLORS['text_muted'],
-                                'margin': '0'
-                            })
-                        ], style={'textAlign': 'center'})
-                    ], style={
-                        'border': f'2px dashed {COLORS["border"]}',
-                        'borderRadius': '12px',
-                        'padding': '32px',
-                        'cursor': 'pointer',
-                        'transition': 'all 0.2s ease',
-                        'marginBottom': '16px'
-                    }),
-                    
-                    dcc.Upload(
-                        id='upload-data',
-                        children=html.Div([
-                            html.Span("📁 Choose File", style={'marginRight': '8px'}),
-                        ]),
-                        style={
-                            'width': '100%',
-                            'padding': '14px',
-                            'background': COLORS['bg_page'],
-                            'border': f'1px solid {COLORS["border"]}',
-                            'borderRadius': '10px',
-                            'textAlign': 'center',
-                            'cursor': 'pointer',
-                            'fontSize': '14px',
-                            'fontWeight': '500',
-                            'color': COLORS['text_secondary']
-                        },
-                        multiple=False
-                    ),
-                    
-                    html.Div(id='upload-status', style={
-                        'marginTop': '12px',
-                        'textAlign': 'center',
-                        'minHeight': '24px'
-                    }),
-                    
-                    html.Div([
-                        html.Div(style={
-                            'height': '1px',
-                            'background': COLORS['border'],
-                            'flex': '1'
-                        }),
-                        html.Span("or", style={
-                            'padding': '0 16px',
-                            'color': COLORS['text_muted'],
-                            'fontSize': '13px'
-                        }),
-                        html.Div(style={
-                            'height': '1px',
-                            'background': COLORS['border'],
-                            'flex': '1'
-                        })
-                    ], style={
-                        'display': 'flex',
-                        'alignItems': 'center',
-                        'margin': '20px 0'
-                    }),
-                    
-                    html.Button([
-                        html.Span("▶", style={'marginRight': '8px'}),
-                        "Load Demo Data"
-                    ], id='load-sample', style={
-                        'width': '100%',
-                        'padding': '14px 24px',
-                        'background': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                        'color': 'white',
-                        'border': 'none',
-                        'borderRadius': '10px',
-                        'fontSize': '14px',
-                        'fontWeight': '600',
-                        'cursor': 'pointer',
-                        'boxShadow': '0 4px 14px rgba(59, 130, 246, 0.4)',
-                        'transition': 'all 0.2s ease'
-                    })
-                ], style={
-                    **CARD_STYLE,
-                    'padding': '28px',
-                    'width': '380px',
-                    'flexShrink': '0'
-                })
-            ], style={
-                'display': 'flex',
-                'alignItems': 'center',
-                'maxWidth': '1000px',
-                'margin': '0 auto'
-            })
-        ], style={
-            'padding': '60px 24px',
-            'background': f'linear-gradient(180deg, {COLORS["bg_page"]} 0%, {COLORS["white"]} 100%)'
-        }),
-        
-        # Data store
-        dcc.Store(id='inventory-data'),
-        
-        # Dashboard content
-        html.Div(id='dashboard-content', style={'display': 'none'})
-        
-    ], style={'minHeight': 'calc(100vh - 70px)'})
+                dcc.Upload(id='upload-data', children=html.Div(["📁 Upload CSV File"]), style={'padding': '14px 28px', 'background': COLORS['bg_page'], 'border': f'2px dashed {COLORS["border"]}', 'borderRadius': '10px', 'textAlign': 'center', 'cursor': 'pointer', 'fontSize': '14px', 'fontWeight': '500', 'color': COLORS['text_secondary']}, multiple=False),
+                html.Span("or", style={'color': COLORS['text_muted'], 'fontSize': '14px', 'margin': '0 16px'}),
+                html.Button(["▶ Load Demo Data"], id='load-sample', style={'padding': '14px 28px', 'background': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', 'color': 'white', 'border': 'none', 'borderRadius': '10px', 'fontSize': '14px', 'fontWeight': '600', 'cursor': 'pointer'})
+            ], style={'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center', 'flexWrap': 'wrap', 'gap': '10px'}),
+            html.Div(id='upload-status', style={'marginTop': '16px', 'textAlign': 'center'})
+        ], style={'maxWidth': '600px', 'margin': '0 auto'})
+    ], style={'padding': '48px 24px', 'background': COLORS['white']}),
     
-], style={
-    'fontFamily': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    'background': COLORS['bg_page'],
-    'minHeight': '100vh',
-    'margin': '0'
-})
+    dcc.Store(id='inventory-data'),
+    html.Div(id='dashboard-content', style={'display': 'none'})
+], style={'fontFamily': '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 'background': COLORS['bg_page'], 'minHeight': '100vh', 'margin': '0'})
 
 
-# ============== HELPER FUNCTIONS ==============
+# ============== HELPERS ==============
 
 def parse_contents(contents, filename):
-    """Parse uploaded CSV"""
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     try:
-        df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-        return df, None
+        return pd.read_csv(io.StringIO(decoded.decode('utf-8'))), None
     except Exception as e:
         return None, str(e)
 
-
 def process_data(df):
-    """Process and validate data"""
     required = ['sku', 'product_name', 'category', 'unit_cost', 'current_stock']
     missing = [c for c in required if c not in df.columns]
-    
     if missing:
-        return None, f"Missing columns: {', '.join(missing)}"
+        return None, f"Missing: {', '.join(missing)}"
     
     if 'stock_value' not in df.columns:
         df['stock_value'] = df['current_stock'] * df['unit_cost']
-    
-    if 'stock_status' not in df.columns and 'days_since_last_sale' in df.columns:
-        df['stock_status'] = df['days_since_last_sale'].apply(
-            lambda x: 'Dead Stock (6+ months)' if x > 180 else
-                      'Slow Moving (3-6 months)' if x > 90 else
-                      'Moderate (1-3 months)' if x > 30 else
-                      'Active (< 1 month)'
-        )
-    
+    if 'days_since_last_sale' not in df.columns:
+        df['days_since_last_sale'] = 0
+    if 'stock_status' not in df.columns:
+        df['stock_status'] = df['days_since_last_sale'].apply(lambda x: 'Dead Stock (6+ months)' if x > 180 else 'Slow Moving (3-6 months)' if x > 90 else 'Moderate (1-3 months)' if x > 30 else 'Active (< 1 month)')
     if 'urgency_score' not in df.columns:
         df['urgency_score'] = 50
-    
     if 'holding_cost' not in df.columns:
         df['holding_cost'] = 0
-        
     if 'action_required' not in df.columns:
-        df['action_required'] = df['stock_status'].apply(
-            lambda x: 'Clearance Sale' if x == 'Dead Stock (6+ months)' else
-                      'Discount / Promote' if x == 'Slow Moving (3-6 months)' else
-                      'Monitor' if x == 'Moderate (1-3 months)' else 'Restock'
-        )
-    
-    if 'monthly_velocity' not in df.columns:
-        df['monthly_velocity'] = 0
-    
+        df['action_required'] = 'Review'
     return df, None
 
-
-# ============== UI COMPONENTS ==============
-
-def create_metric_card(icon, title, value, subtitle, trend=None, trend_up=True, color=None):
-    """Create a professional metric card"""
-    trend_color = COLORS['success'] if trend_up else COLORS['danger']
-    
+def create_metric_card(icon, title, value, subtitle, color=None):
     return html.Div([
-        html.Div([
-            html.Div([
-                html.Span(icon, style={'fontSize': '20px'})
-            ], style={
-                'width': '48px',
-                'height': '48px',
-                'background': f'{color}15' if color else COLORS['bg_page'],
-                'borderRadius': '12px',
-                'display': 'flex',
-                'alignItems': 'center',
-                'justifyContent': 'center',
-                'marginBottom': '16px'
-            }),
-            html.P(title, style={
-                'fontSize': '13px',
-                'color': COLORS['text_muted'],
-                'margin': '0 0 8px 0',
-                'fontWeight': '500',
-                'textTransform': 'uppercase',
-                'letterSpacing': '0.5px'
-            }),
-            html.H3(value, style={
-                'fontSize': '28px',
-                'fontWeight': '700',
-                'color': color if color else COLORS['text_primary'],
-                'margin': '0 0 4px 0',
-                'letterSpacing': '-0.5px'
-            }),
-            html.Div([
-                html.Span(subtitle, style={
-                    'fontSize': '13px',
-                    'color': COLORS['text_secondary']
-                }),
-                html.Span([
-                    html.Span("↑ " if trend_up else "↓ ", style={'fontSize': '11px'}),
-                    trend
-                ], style={
-                    'fontSize': '12px',
-                    'color': trend_color,
-                    'fontWeight': '600',
-                    'marginLeft': '8px'
-                }) if trend else None
-            ], style={'display': 'flex', 'alignItems': 'center'})
-        ])
-    ], style={
-        **CARD_STYLE,
-        'padding': '24px'
-    })
-
+        html.Div([html.Span(icon, style={'fontSize': '20px'})], style={'width': '48px', 'height': '48px', 'background': f'{color}15' if color else COLORS['bg_page'], 'borderRadius': '12px', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center', 'marginBottom': '12px'}),
+        html.P(title, style={'fontSize': '12px', 'color': COLORS['text_muted'], 'margin': '0 0 6px 0', 'fontWeight': '500', 'textTransform': 'uppercase'}),
+        html.H3(value, style={'fontSize': '24px', 'fontWeight': '700', 'color': color if color else COLORS['text_primary'], 'margin': '0 0 4px 0'}),
+        html.Span(subtitle, style={'fontSize': '12px', 'color': COLORS['text_secondary']})
+    ], style={**CARD_STYLE, 'padding': '20px'})
 
 def create_kpi_section(df):
-    """Create KPI cards section"""
     dead = df[df['stock_status'] == 'Dead Stock (6+ months)']
     slow = df[df['stock_status'] == 'Slow Moving (3-6 months)']
     active = df[df['stock_status'] == 'Active (< 1 month)']
-    
-    total_value = df['stock_value'].sum()
-    dead_value = dead['stock_value'].sum()
-    slow_value = slow['stock_value'].sum()
-    holding_cost = df['holding_cost'].sum()
-    problem_pct = ((len(dead) + len(slow)) / len(df)) * 100 if len(df) > 0 else 0
-    
     return html.Div([
-        create_metric_card(
-            "💀", "Dead Stock Value",
-            f"P{dead_value:,.0f}",
-            f"{len(dead)} products",
-            color=COLORS['danger']
-        ),
-        create_metric_card(
-            "🐌", "Slow Moving",
-            f"P{slow_value:,.0f}",
-            f"{len(slow)} products",
-            color=COLORS['warning']
-        ),
-        create_metric_card(
-            "💸", "Holding Costs",
-            f"P{holding_cost:,.0f}",
-            "Accumulated waste",
-            color=COLORS['accent']
-        ),
-        create_metric_card(
-            "📊", "Problem Rate",
-            f"{problem_pct:.1f}%",
-            f"of {len(df)} total items",
-            color=COLORS['secondary']
-        ),
-        create_metric_card(
-            "✅", "Healthy Stock",
-            f"P{active['stock_value'].sum():,.0f}",
-            f"{len(active)} active items",
-            color=COLORS['success']
-        ),
-        create_metric_card(
-            "💰", "Total Inventory",
-            f"P{total_value:,.0f}",
-            f"{df['current_stock'].sum():,.0f} units",
-            color=COLORS['text_primary']
-        )
-    ], style={
-        'display': 'grid',
-        'gridTemplateColumns': 'repeat(auto-fit, minmax(200px, 1fr))',
-        'gap': '20px',
-        'marginBottom': '32px'
-    })
-
-
-# ============== CHART FUNCTIONS ==============
+        create_metric_card("💀", "Dead Stock", f"P{dead['stock_value'].sum():,.0f}", f"{len(dead)} items", COLORS['danger']),
+        create_metric_card("🐌", "Slow Moving", f"P{slow['stock_value'].sum():,.0f}", f"{len(slow)} items", COLORS['warning']),
+        create_metric_card("✅", "Active Stock", f"P{active['stock_value'].sum():,.0f}", f"{len(active)} items", COLORS['success']),
+        create_metric_card("💰", "Total Value", f"P{df['stock_value'].sum():,.0f}", f"{len(df)} products", COLORS['accent'])
+    ], style={'display': 'grid', 'gridTemplateColumns': 'repeat(auto-fit, minmax(180px, 1fr))', 'gap': '16px', 'marginBottom': '24px'})
 
 def create_status_chart(df):
-    """Professional donut chart"""
     summary = df.groupby('stock_status')['stock_value'].sum().reset_index()
-    
-    fig = go.Figure(data=[go.Pie(
-        labels=summary['stock_status'],
-        values=summary['stock_value'],
-        hole=0.65,
-        marker=dict(
-            colors=[STATUS_COLORS.get(s, COLORS['secondary']) for s in summary['stock_status']],
-            line=dict(color=COLORS['white'], width=3)
-        ),
-        textinfo='percent',
-        textposition='outside',
-        textfont=dict(size=12, color=COLORS['text_secondary']),
-        hovertemplate="<b>%{label}</b><br>P%{value:,.0f}<br>%{percent}<extra></extra>"
-    )])
-    
-    # Add center text
-    total_value = df['stock_value'].sum()
-    fig.add_annotation(
-        text=f"<b>P{total_value:,.0f}</b>",
-        x=0.5, y=0.55,
-        font=dict(size=20, color=COLORS['text_primary']),
-        showarrow=False
-    )
-    fig.add_annotation(
-        text="Total Value",
-        x=0.5, y=0.42,
-        font=dict(size=11, color=COLORS['text_muted']),
-        showarrow=False
-    )
-    
-    fig.update_layout(
-        showlegend=True,
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=-0.15,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=11, color=COLORS['text_secondary'])
-        ),
-        margin=dict(t=20, b=60, l=20, r=20),
-        height=320,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)'
-    )
-    
+    fig = go.Figure(data=[go.Pie(labels=summary['stock_status'], values=summary['stock_value'], hole=0.6, marker=dict(colors=[STATUS_COLORS.get(s, COLORS['secondary']) for s in summary['stock_status']]), textinfo='percent', hovertemplate="<b>%{label}</b><br>P%{value:,.0f}<extra></extra>")])
+    fig.update_layout(showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5), margin=dict(t=20, b=60, l=20, r=20), height=300, paper_bgcolor='rgba(0,0,0,0)')
     return fig
-
 
 def create_category_chart(df):
-    """Professional horizontal bar chart"""
     problem = df[df['stock_status'].isin(['Dead Stock (6+ months)', 'Slow Moving (3-6 months)'])]
-    
     if len(problem) == 0:
         fig = go.Figure()
-        fig.add_annotation(
-            text="No problem stock found! 🎉",
-            x=0.5, y=0.5,
-            font=dict(size=16, color=COLORS['success']),
-            showarrow=False,
-            xref="paper", yref="paper"
-        )
-        fig.update_layout(height=320, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+        fig.add_annotation(text="No problem stock! 🎉", x=0.5, y=0.5, showarrow=False, font=dict(size=16))
+        fig.update_layout(height=300, paper_bgcolor='rgba(0,0,0,0)')
         return fig
-    
     cat_summary = problem.groupby('category')['stock_value'].sum().sort_values(ascending=True).reset_index()
-    
-    fig = go.Figure()
-    
-    fig.add_trace(go.Bar(
-        y=cat_summary['category'],
-        x=cat_summary['stock_value'],
-        orientation='h',
-        marker=dict(
-            color=cat_summary['stock_value'],
-            colorscale=[[0, COLORS['warning']], [1, COLORS['danger']]],
-            line=dict(width=0)
-        ),
-        hovertemplate="<b>%{y}</b><br>P%{x:,.0f}<extra></extra>"
-    ))
-    
-    fig.update_layout(
-        xaxis_title="Stock Value (Pula)",
-        yaxis_title="",
-        font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
-        margin=dict(t=20, b=50, l=120, r=30),
-        height=320,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            gridcolor=COLORS['border_light'],
-            zerolinecolor=COLORS['border']
-        ),
-        yaxis=dict(
-            gridcolor='rgba(0,0,0,0)'
-        ),
-        bargap=0.3
-    )
-    
+    fig = go.Figure(go.Bar(y=cat_summary['category'], x=cat_summary['stock_value'], orientation='h', marker=dict(color=COLORS['danger'])))
+    fig.update_layout(xaxis_title="Stock Value (P)", margin=dict(t=20, b=50, l=100, r=20), height=300, paper_bgcolor='rgba(0,0,0,0)')
     return fig
-
-
-def create_aging_chart(df):
-    """Professional scatter plot with fixed legend positioning"""
-    fig = px.scatter(
-        df,
-        x='days_since_last_sale',
-        y='stock_value',
-        color='stock_status',
-        color_discrete_map=STATUS_COLORS,
-        size='current_stock',
-        size_max=30,
-        hover_name='product_name',
-        hover_data={
-            'category': True,
-            'days_since_last_sale': True,
-            'stock_value': ':.2f',
-            'stock_status': False,
-            'current_stock': True
-        }
-    )
-    
-    # Add danger zone
-    max_days = df['days_since_last_sale'].max() if len(df) > 0 else 200
-    fig.add_vrect(
-        x0=180, x1=max_days + 20,
-        fillcolor=COLORS['danger'], opacity=0.08,
-        line_width=0
-    )
-    
-    fig.add_vline(
-        x=180,
-        line_dash="dash",
-        line_color=COLORS['danger'],
-        line_width=2,
-        annotation_text="⚠️ Dead Stock Zone",
-        annotation_position="top left",
-        annotation_font=dict(size=11, color=COLORS['danger'])
-    )
-    
-    fig.update_traces(
-        marker=dict(
-            line=dict(width=1, color=COLORS['white']),
-            opacity=0.8
-        )
-    )
-    
-    fig.update_layout(
-        xaxis_title="Days Since Last Sale",
-        yaxis_title="Stock Value (Pula)",
-        font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=-0.15,
-            xanchor="center",
-            x=0.5,
-            title="",
-            font=dict(size=11)
-        ),
-        margin=dict(t=30, b=100, l=70, r=30),
-        height=450,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            gridcolor=COLORS['border_light'], 
-            zerolinecolor=COLORS['border'],
-            range=[0, max_days + 30]
-        ),
-        yaxis=dict(
-            gridcolor=COLORS['border_light'], 
-            zerolinecolor=COLORS['border']
-        )
-    )
-    
-    return fig
-
 
 def create_worst_products_chart(df):
-    """Top 10 products with highest dead stock value - actionable insight"""
-    dead = df[df['stock_status'] == 'Dead Stock (6+ months)'].nlargest(10, 'stock_value')
-    
+    dead = df[df['stock_status'] == 'Dead Stock (6+ months)'].nlargest(8, 'stock_value')
     if len(dead) == 0:
         fig = go.Figure()
-        fig.add_annotation(
-            text="🎉 No dead stock found!",
-            x=0.5, y=0.5,
-            font=dict(size=18, color=COLORS['success']),
-            showarrow=False,
-            xref="paper", yref="paper"
-        )
-        fig.add_annotation(
-            text="Your inventory is healthy",
-            x=0.5, y=0.4,
-            font=dict(size=13, color=COLORS['text_muted']),
-            showarrow=False,
-            xref="paper", yref="paper"
-        )
-        fig.update_layout(
-            height=350, 
-            paper_bgcolor='rgba(0,0,0,0)', 
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
+        fig.add_annotation(text="No dead stock! 🎉", x=0.5, y=0.5, showarrow=False, font=dict(size=16))
+        fig.update_layout(height=300, paper_bgcolor='rgba(0,0,0,0)')
         return fig
-    
-    # Truncate long product names
-    dead['short_name'] = dead['product_name'].apply(
-        lambda x: x[:30] + '...' if len(str(x)) > 30 else x
-    )
-    
-    fig = go.Figure()
-    
-    fig.add_trace(go.Bar(
-        x=dead['stock_value'],
-        y=dead['short_name'],
-        orientation='h',
-        marker=dict(
-            color=dead['days_since_last_sale'],
-            colorscale=[[0, COLORS['warning']], [1, COLORS['danger']]],
-            line=dict(width=0),
-            colorbar=dict(
-                title=dict(text="Days Idle", font=dict(size=11)),
-                thickness=15,
-                len=0.6
-            )
-        ),
-        text=[f"P{v:,.0f}" for v in dead['stock_value']],
-        textposition='outside',
-        textfont=dict(size=11, color=COLORS['text_secondary']),
-        hovertemplate="<b>%{y}</b><br>Value: P%{x:,.0f}<br>Days idle: %{marker.color}<extra></extra>"
-    ))
-    
-    fig.update_layout(
-        xaxis_title="Stock Value (Pula)",
-        yaxis_title="",
-        font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
-        margin=dict(t=20, b=50, l=180, r=80),
-        height=380,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            gridcolor=COLORS['border_light'],
-            zerolinecolor=COLORS['border']
-        ),
-        yaxis=dict(
-            gridcolor='rgba(0,0,0,0)',
-            autorange='reversed'
-        ),
-        bargap=0.35
-    )
-    
+    dead = dead.copy()
+    dead['short_name'] = dead['product_name'].apply(lambda x: x[:25] + '...' if len(str(x)) > 25 else x)
+    fig = go.Figure(go.Bar(x=dead['stock_value'], y=dead['short_name'], orientation='h', marker=dict(color=COLORS['danger']), text=[f"P{v:,.0f}" for v in dead['stock_value']], textposition='outside'))
+    fig.update_layout(xaxis_title="Stock Value (P)", margin=dict(t=20, b=50, l=160, r=60), height=320, paper_bgcolor='rgba(0,0,0,0)', yaxis=dict(autorange='reversed'))
     return fig
-
-
-def create_cash_recovery_chart(df):
-    """Shows potential cash recovery from clearing dead stock"""
-    
-    dead = df[df['stock_status'] == 'Dead Stock (6+ months)']
-    
-    if len(dead) == 0:
-        fig = go.Figure()
-        fig.add_annotation(
-            text="🎉 No dead stock to recover!",
-            x=0.5, y=0.5,
-            font=dict(size=18, color=COLORS['success']),
-            showarrow=False,
-            xref="paper", yref="paper"
-        )
-        fig.update_layout(
-            height=320, 
-            paper_bgcolor='rgba(0,0,0,0)', 
-            plot_bgcolor='rgba(0,0,0,0)'
-        )
-        return fig
-    
-    cat_summary = dead.groupby('category').agg({
-        'stock_value': 'sum',
-        'sku': 'count'
-    }).reset_index()
-    cat_summary.columns = ['category', 'value', 'count']
-    cat_summary = cat_summary.sort_values('value', ascending=False)
-    
-    # Truncate long category names
-    cat_summary['short_category'] = cat_summary['category'].apply(
-        lambda x: x[:15] + '...' if len(str(x)) > 15 else x
-    )
-    
-    # Calculate recovery scenarios
-    cat_summary['full_price'] = cat_summary['value']
-    cat_summary['half_price'] = cat_summary['value'] * 0.5
-    cat_summary['clearance'] = cat_summary['value'] * 0.25
-    
-    fig = go.Figure()
-    
-    # Full price recovery
-    fig.add_trace(go.Bar(
-        name='Full Price',
-        x=cat_summary['short_category'],
-        y=cat_summary['full_price'],
-        marker=dict(color=COLORS['text_muted'], line=dict(width=0)),
-        opacity=0.4,
-        hovertemplate="<b>%{x}</b><br>Full: P%{y:,.0f}<extra></extra>"
-    ))
-    
-    # 50% recovery
-    fig.add_trace(go.Bar(
-        name='50% Off',
-        x=cat_summary['short_category'],
-        y=cat_summary['half_price'],
-        marker=dict(color=COLORS['warning'], line=dict(width=0)),
-        hovertemplate="<b>%{x}</b><br>50% Off: P%{y:,.0f}<extra></extra>"
-    ))
-    
-    # Clearance recovery
-    fig.add_trace(go.Bar(
-        name='75% Off',
-        x=cat_summary['short_category'],
-        y=cat_summary['clearance'],
-        marker=dict(color=COLORS['success'], line=dict(width=0)),
-        hovertemplate="<b>%{x}</b><br>Clearance: P%{y:,.0f}<extra></extra>"
-    ))
-    
-    fig.update_layout(
-        barmode='overlay',
-        xaxis_title="",
-        yaxis_title="Recovery (Pula)",
-        font=dict(family="Segoe UI", size=12, color=COLORS['text_secondary']),
-        legend=dict(
-            orientation="h",
-            yanchor="top",
-            y=1.12,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=10),
-            bgcolor='rgba(255,255,255,0.8)'
-        ),
-        margin=dict(t=60, b=80, l=60, r=30),
-        height=380,
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        xaxis=dict(
-            gridcolor='rgba(0,0,0,0)',
-            tickangle=-35,
-            tickfont=dict(size=10)
-        ),
-        yaxis=dict(
-            gridcolor=COLORS['border_light']
-        ),
-        bargap=0.4
-    )
-    
-    return fig
-
-
-# ============== TABLE COMPONENT ==============
 
 def create_priority_table(df):
-    """Professional data table"""
-    priority = df.nlargest(10, 'urgency_score')[[
-        'sku', 'product_name', 'category', 'current_stock',
-        'stock_value', 'days_since_last_sale', 'urgency_score', 'action_required'
-    ]].copy()
-    
-    return dash_table.DataTable(
-        data=priority.to_dict('records'),
-        columns=[
-            {'name': 'SKU', 'id': 'sku'},
-            {'name': 'Product', 'id': 'product_name'},
-            {'name': 'Category', 'id': 'category'},
-            {'name': 'Stock', 'id': 'current_stock', 'type': 'numeric'},
-            {'name': 'Value (P)', 'id': 'stock_value', 'type': 'numeric', 'format': {'specifier': ',.2f'}},
-            {'name': 'Days Idle', 'id': 'days_since_last_sale', 'type': 'numeric'},
-            {'name': 'Priority', 'id': 'urgency_score', 'type': 'numeric'},
-            {'name': 'Action', 'id': 'action_required'}
-        ],
-        style_table={
-            'overflowX': 'auto',
-            'borderRadius': '12px'
-        },
-        style_cell={
-            'textAlign': 'left',
-            'padding': '16px 20px',
-            'fontFamily': '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-            'fontSize': '13px',
-            'color': COLORS['text_primary'],
-            'border': 'none',
-            'borderBottom': f'1px solid {COLORS["border_light"]}'
-        },
-        style_header={
-            'backgroundColor': COLORS['bg_page'],
-            'fontWeight': '600',
-            'fontSize': '11px',
-            'color': COLORS['text_muted'],
-            'textTransform': 'uppercase',
-            'letterSpacing': '0.5px',
-            'border': 'none',
-            'borderBottom': f'2px solid {COLORS["border"]}'
-        },
-        style_data_conditional=[
-            {
-                'if': {'filter_query': '{urgency_score} >= 75'},
-                'backgroundColor': '#fef2f2'
-            },
-            {
-                'if': {'filter_query': '{urgency_score} >= 50 && {urgency_score} < 75'},
-                'backgroundColor': '#fffbeb'
-            },
-            {
-                'if': {'column_id': 'action_required'},
-                'fontWeight': '600',
-                'color': COLORS['accent']
-            },
-            {
-                'if': {'column_id': 'urgency_score'},
-                'fontWeight': '700'
-            },
-            {
-                'if': {'state': 'active'},
-                'backgroundColor': COLORS['bg_page'],
-                'border': 'none'
-            }
-        ],
-        page_size=10,
-        sort_action='native',
-        filter_action='native',
-        style_as_list_view=True
-    )
+    priority = df.nlargest(8, 'urgency_score')[['product_name', 'category', 'current_stock', 'stock_value', 'days_since_last_sale', 'action_required']].copy()
+    return dash_table.DataTable(data=priority.to_dict('records'), columns=[{'name': 'Product', 'id': 'product_name'}, {'name': 'Category', 'id': 'category'}, {'name': 'Stock', 'id': 'current_stock'}, {'name': 'Value (P)', 'id': 'stock_value', 'type': 'numeric', 'format': {'specifier': ',.0f'}}, {'name': 'Days Idle', 'id': 'days_since_last_sale'}, {'name': 'Action', 'id': 'action_required'}], style_table={'overflowX': 'auto'}, style_cell={'textAlign': 'left', 'padding': '12px', 'fontSize': '13px'}, style_header={'backgroundColor': COLORS['bg_page'], 'fontWeight': '600', 'fontSize': '11px', 'textTransform': 'uppercase'}, page_size=8)
 
 
-# ============== ACTION CARDS ==============
-
-def create_action_cards(df):
-    """Create actionable insight cards"""
-    dead = df[df['stock_status'] == 'Dead Stock (6+ months)']
-    dead_value = dead['stock_value'].sum()
-    
-    if len(dead) > 0:
-        top_dead_cat = dead.groupby('category')['stock_value'].sum().idxmax()
-        top_dead_val = dead.groupby('category')['stock_value'].sum().max()
-    else:
-        top_dead_cat = "N/A"
-        top_dead_val = 0
-    
-    at_risk = df[(df['days_since_last_sale'] > 60) & (df['days_since_last_sale'] <= 90)]
-    
-    actions = [
-        {
-            "icon": "🚨",
-            "title": "Immediate: Clear Dead Stock",
-            "description": f"P{dead_value:,.0f} trapped in {len(dead)} dead items. Run a clearance sale this weekend.",
-            "action": "Start Clearance",
-            "color": COLORS['danger']
-        },
-        {
-            "icon": "📦",
-            "title": f"Focus: {top_dead_cat}",
-            "description": f"This category has P{top_dead_val:,.0f} stuck. Review supplier minimum orders.",
-            "action": "Review Category",
-            "color": COLORS['warning']
-        },
-        {
-            "icon": "⏰",
-            "title": f"At Risk: {len(at_risk)} Items",
-            "description": f"P{at_risk['stock_value'].sum():,.0f} becoming dead soon. Promote on WhatsApp.",
-            "action": "Create Promo",
-            "color": COLORS['accent']
-        },
-        {
-            "icon": "💡",
-            "title": "Quick Win",
-            "description": f"Selling 50% of dead stock at cost frees P{dead_value*0.5:,.0f} for fast sellers.",
-            "action": "Calculate ROI",
-            "color": COLORS['success']
-        }
-    ]
-    
-    cards = []
-    for action in actions:
-        cards.append(
-            html.Div([
-                html.Div([
-                    html.Span(action['icon'], style={'fontSize': '24px'}),
-                ], style={
-                    'width': '48px',
-                    'height': '48px',
-                    'background': f'{action["color"]}15',
-                    'borderRadius': '12px',
-                    'display': 'flex',
-                    'alignItems': 'center',
-                    'justifyContent': 'center',
-                    'marginBottom': '16px'
-                }),
-                html.H4(action['title'], style={
-                    'fontSize': '15px',
-                    'fontWeight': '600',
-                    'color': COLORS['text_primary'],
-                    'margin': '0 0 8px 0'
-                }),
-                html.P(action['description'], style={
-                    'fontSize': '13px',
-                    'color': COLORS['text_secondary'],
-                    'lineHeight': '1.5',
-                    'margin': '0 0 16px 0'
-                }),
-                html.Button(action['action'], style={
-                    'background': 'transparent',
-                    'border': f'1px solid {action["color"]}',
-                    'color': action['color'],
-                    'padding': '8px 16px',
-                    'borderRadius': '8px',
-                    'fontSize': '12px',
-                    'fontWeight': '600',
-                    'cursor': 'pointer'
-                })
-            ], style={
-                **CARD_STYLE,
-                'padding': '24px'
-            })
-        )
-    
-    return html.Div(cards, style={
-        'display': 'grid',
-        'gridTemplateColumns': 'repeat(auto-fit, minmax(260px, 1fr))',
-        'gap': '20px'
-    })
-
-
-# ============== SUMMARY BANNER ==============
-
-def create_summary_banner(df):
-    """Create summary banner at top of dashboard"""
-    dead = df[df['stock_status'] == 'Dead Stock (6+ months)']
-    dead_value = dead['stock_value'].sum()
-    total_value = df['stock_value'].sum()
-    dead_pct = (dead_value / total_value * 100) if total_value > 0 else 0
-    
-    return html.Div([
-        html.Div([
-            html.Div([
-                html.Span("📊", style={'fontSize': '24px', 'marginRight': '12px'}),
-                html.Div([
-                    html.Span("Analysis Complete", style={
-                        'fontSize': '12px',
-                        'color': COLORS['text_muted'],
-                        'textTransform': 'uppercase',
-                        'letterSpacing': '0.5px'
-                    }),
-                    html.H3(f"P{dead_value:,.0f} Found in Dead Stock", style={
-                        'margin': '4px 0 0 0',
-                        'fontSize': '20px',
-                        'fontWeight': '700',
-                        'color': COLORS['text_primary']
-                    })
-                ])
-            ], style={'display': 'flex', 'alignItems': 'center'}),
-            
-            html.Div([
-                html.Div([
-                    html.Span(f"{dead_pct:.1f}%", style={
-                        'fontSize': '24px',
-                        'fontWeight': '700',
-                        'color': COLORS['danger']
-                    }),
-                    html.Span(" of inventory value is stuck", style={
-                        'color': COLORS['text_secondary'],
-                        'marginLeft': '8px'
-                    })
-                ])
-            ])
-        ], style={
-            'display': 'flex',
-            'justifyContent': 'space-between',
-            'alignItems': 'center',
-            'flexWrap': 'wrap',
-            'gap': '20px'
-        })
-    ], style={
-        **CARD_STYLE,
-        'padding': '24px 32px',
-        'marginBottom': '32px',
-        'borderLeft': f'4px solid {COLORS["danger"]}'
-    })
-
-
-# ============== MAIN CALLBACK ==============
+# ============== CALLBACK ==============
 
 @app.callback(
-    [Output('inventory-data', 'data'),
-     Output('upload-status', 'children'),
-     Output('dashboard-content', 'style'),
-     Output('dashboard-content', 'children')],
-    [Input('upload-data', 'contents'),
-     Input('load-sample', 'n_clicks')],
+    [Output('inventory-data', 'data'), Output('upload-status', 'children'), Output('dashboard-content', 'style'), Output('dashboard-content', 'children')],
+    [Input('upload-data', 'contents'), Input('load-sample', 'n_clicks')],
     [State('upload-data', 'filename')]
 )
 def update_dashboard(contents, n_clicks, filename):
     ctx = callback_context
-    
     if not ctx.triggered:
         return None, "", {'display': 'none'}, None
     
     trigger = ctx.triggered[0]['prop_id'].split('.')[0]
     
     if trigger == 'load-sample' and n_clicks:
-        from generate_data import generate_spaza_inventory
-        df = generate_spaza_inventory()
-        status = html.Div([
-            html.Span("✓", style={
-                'color': COLORS['success'],
-                'fontWeight': 'bold',
-                'marginRight': '8px'
-            }),
-            "Demo data loaded successfully"
-        ], style={'color': COLORS['success'], 'fontSize': '13px'})
-    
+        df = generate_spaza_inventory()  # Now uses embedded function
+        status = html.Span("✓ Demo data loaded", style={'color': COLORS['success']})
     elif trigger == 'upload-data' and contents:
         df, error = parse_contents(contents, filename)
         if error:
-            return None, html.Div([
-                html.Span("✗", style={'color': COLORS['danger'], 'marginRight': '8px'}),
-                f"Error: {error}"
-            ], style={'color': COLORS['danger'], 'fontSize': '13px'}), {'display': 'none'}, None
-        
+            return None, html.Span(f"✗ {error}", style={'color': COLORS['danger']}), {'display': 'none'}, None
         df, error = process_data(df)
         if error:
-            return None, html.Div([
-                html.Span("✗", style={'color': COLORS['danger'], 'marginRight': '8px'}),
-                error
-            ], style={'color': COLORS['danger'], 'fontSize': '13px'}), {'display': 'none'}, None
-        
-        status = html.Div([
-            html.Span("✓", style={
-                'color': COLORS['success'],
-                'fontWeight': 'bold',
-                'marginRight': '8px'
-            }),
-            f"Loaded {len(df)} products from {filename}"
-        ], style={'color': COLORS['success'], 'fontSize': '13px'})
+            return None, html.Span(f"✗ {error}", style={'color': COLORS['danger']}), {'display': 'none'}, None
+        status = html.Span(f"✓ Loaded {len(df)} products", style={'color': COLORS['success']})
     else:
         return None, "", {'display': 'none'}, None
     
-    # Build dashboard
     dashboard = html.Div([
-        # Main container
         html.Div([
-            # Summary Banner
-            create_summary_banner(df),
-            
-            # KPI Cards
             create_kpi_section(df),
-            
-            # Charts Row 1: Donut + Category Bar
             html.Div([
-                html.Div([
-                    html.Div([
-                        html.Span("📈", style={'marginRight': '8px'}),
-                        "Stock Value Distribution"
-                    ], style=SECTION_HEADER_STYLE),
-                    dcc.Graph(
-                        figure=create_status_chart(df),
-                        config={'displayModeBar': False}
-                    )
-                ], style={**CARD_STYLE, 'padding': '24px'}),
-                
-                html.Div([
-                    html.Div([
-                        html.Span("📦", style={'marginRight': '8px'}),
-                        "Problem Stock by Category"
-                    ], style=SECTION_HEADER_STYLE),
-                    dcc.Graph(
-                        figure=create_category_chart(df),
-                        config={'displayModeBar': False}
-                    )
-                ], style={**CARD_STYLE, 'padding': '24px'})
-            ], style={
-                'display': 'grid',
-                'gridTemplateColumns': 'repeat(auto-fit, minmax(400px, 1fr))',
-                'gap': '24px',
-                'marginBottom': '24px'
-            }),
-            
-            # Aging Analysis Chart (Full Width)
-            html.Div([
-                html.Div([
-                    html.Span("📅", style={'marginRight': '8px'}),
-                    "Stock Aging Analysis"
-                ], style=SECTION_HEADER_STYLE),
-                dcc.Graph(
-                    figure=create_aging_chart(df),
-                    config={'displayModeBar': False}
-                )
-            ], style={**CARD_STYLE, 'padding': '24px', 'marginBottom': '24px'}),
-            
-            # Charts Row 2: Worst Products + Cash Recovery
-            html.Div([
-                html.Div([
-                    html.Div([
-                        html.Span("🔥", style={'marginRight': '8px'}),
-                        "Top 10 Dead Stock Items"
-                    ], style=SECTION_HEADER_STYLE),
-                    dcc.Graph(
-                        figure=create_worst_products_chart(df),
-                        config={'displayModeBar': False}
-                    )
-                ], style={**CARD_STYLE, 'padding': '24px'}),
-                
-                html.Div([
-                    html.Div([
-                        html.Span("💵", style={'marginRight': '8px'}),
-                        "Potential Cash Recovery"
-                    ], style=SECTION_HEADER_STYLE),
-                    dcc.Graph(
-                        figure=create_cash_recovery_chart(df),
-                        config={'displayModeBar': False}
-                    )
-                ], style={**CARD_STYLE, 'padding': '24px'})
-            ], style={
-                'display': 'grid',
-                'gridTemplateColumns': 'repeat(auto-fit, minmax(400px, 1fr))',
-                'gap': '24px',
-                'marginBottom': '24px'
-            }),
-            
-            # Priority Table
-            html.Div([
-                html.Div([
-                    html.Span("🎯", style={'marginRight': '8px'}),
-                    "Priority Action Items"
-                ], style=SECTION_HEADER_STYLE),
-                create_priority_table(df)
-            ], style={**CARD_STYLE, 'padding': '24px', 'marginBottom': '24px'}),
-            
-            # Action Cards
-            html.Div([
-                html.Div([
-                    html.Span("💡", style={'marginRight': '8px'}),
-                    "Recommended Actions"
-                ], style=SECTION_HEADER_STYLE),
-                create_action_cards(df)
-            ], style={'marginBottom': '32px'}),
-            
-            # Footer
-            html.Div([
-                html.Div([
-                    html.Span("📦 StockAudit", style={
-                        'fontWeight': '600',
-                        'color': COLORS['text_primary']
-                    }),
-                    html.Span(" • ", style={'color': COLORS['text_muted']}),
-                    html.Span("Spaza Shop Edition", style={'color': COLORS['text_muted']}),
-                    html.Span(" • ", style={'color': COLORS['text_muted']}),
-                    html.Span("Made for Botswana 🇧🇼", style={'color': COLORS['text_muted']})
-                ])
-            ], style={
-                'textAlign': 'center',
-                'padding': '24px',
-                'borderTop': f'1px solid {COLORS["border"]}',
-                'fontSize': '13px'
-            })
-            
-        ], style={
-            'maxWidth': '1400px',
-            'margin': '0 auto',
-            'padding': '32px 24px'
-        })
-    ], style={
-        'background': COLORS['bg_page']
-    })
+                html.Div([html.H3("📈 Stock Distribution", style={'fontSize': '16px', 'marginBottom': '16px'}), dcc.Graph(figure=create_status_chart(df), config={'displayModeBar': False})], style={**CARD_STYLE, 'padding': '20px'}),
+                html.Div([html.H3("📦 Problem by Category", style={'fontSize': '16px', 'marginBottom': '16px'}), dcc.Graph(figure=create_category_chart(df), config={'displayModeBar': False})], style={**CARD_STYLE, 'padding': '20px'})
+            ], style={'display': 'grid', 'gridTemplateColumns': 'repeat(auto-fit, minmax(350px, 1fr))', 'gap': '20px', 'marginBottom': '20px'}),
+            html.Div([html.H3("🔥 Top Dead Stock Items", style={'fontSize': '16px', 'marginBottom': '16px'}), dcc.Graph(figure=create_worst_products_chart(df), config={'displayModeBar': False})], style={**CARD_STYLE, 'padding': '20px', 'marginBottom': '20px'}),
+            html.Div([html.H3("🎯 Priority Actions", style={'fontSize': '16px', 'marginBottom': '16px'}), create_priority_table(df)], style={**CARD_STYLE, 'padding': '20px', 'marginBottom': '20px'}),
+            html.Div([html.Span("📦 StockAudit • Spaza Shop Edition • Made for Botswana 🇧🇼", style={'color': COLORS['text_muted'], 'fontSize': '13px'})], style={'textAlign': 'center', 'padding': '20px'})
+        ], style={'maxWidth': '1200px', 'margin': '0 auto', 'padding': '24px'})
+    ], style={'background': COLORS['bg_page']})
     
     return df.to_json(), status, {'display': 'block'}, dashboard
 
 
-# ============== RUN SERVER ==============
+# ============== FOR VERCEL ==============
+# The 'server' variable is what Vercel needs
+# Do NOT call app.run_server() on Vercel
 
 if __name__ == '__main__':
+    # Only runs locally, not on Vercel
     app.run_server(debug=True, port=8050)
