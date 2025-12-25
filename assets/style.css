@@ -1,0 +1,179 @@
+/* ============== BASE STYLES ============== */
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #f1f5f9;
+}
+
+/* ============== SCROLLBAR ============== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ============== BUTTONS ============== */
+button {
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ============== CARDS ============== */
+.js-plotly-plot {
+    border-radius: 12px;
+}
+
+/* ============== TABLE ============== */
+.dash-table-container {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dash-spreadsheet-container {
+    border: none !important;
+}
+
+.dash-spreadsheet-container .dash-spreadsheet-inner {
+    border: none !important;
+}
+
+/* ============== UPLOAD ============== */
+.dash-upload {
+    transition: all 0.2s ease;
+}
+
+.dash-upload:hover {
+    border-color: #3b82f6 !important;
+    background: #f8fafc !important;
+}
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 1024px) {
+    .dash-table-container {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    h2 {
+        font-size: 24px !important;
+    }
+    
+    .dash-table-container td,
+    .dash-table-container th {
+        padding: 10px 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dash-table-container {
+        font-size: 11px;
+    }
+}
+
+/* ============== ANIMATIONS ============== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ============== LOADING STATE ============== */
+._dash-loading {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* ============== FOCUS STATES ============== */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ============== PRINT STYLES ============== */
+@media print {
+    nav,
+    button,
+    .dash-upload,
+    .upload-section {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+}
+
+/* ============== SELECTION ============== */
+::selection {
+    background: #3b82f6;
+    color: white;
+}
+
+/* ============== TOOLTIPS ============== */
+.plotly .hoverlayer {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}

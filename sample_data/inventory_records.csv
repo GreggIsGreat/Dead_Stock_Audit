@@ -1,0 +1,114 @@
+sku,product_name,category,unit_cost,unit_price,profit_margin_pct,initial_quantity,current_stock,total_sold,stock_received_date,last_sale_date,days_since_last_sale,days_in_stock,monthly_velocity,stock_value,potential_revenue,holding_cost,movement_category,stock_status,urgency_score,action_required
+SPZ-GRO-0001,Maize Meal 2.5kg (White Star),Groceries,79.62,92.16,13.6,47,0,47,2025-04-18,2025-04-21,248,251,5.62,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0002,Maize Meal 5kg (White Star),Groceries,64.6,74.8,13.6,83,0,83,2025-09-30,2025-10-20,66,86,28.95,0.0,0.0,0.0,fast,Moderate (1-3 months),13.2,Monitor Weekly
+SPZ-GRO-0003,Maize Meal 1kg (Iwisa),Groceries,18.39,21.68,15.2,35,13,22,2025-05-09,2025-12-17,8,230,2.87,239.07,281.84,36.66,slow,Active (< 1 month),41.6,Restock When Low
+SPZ-GRO-0004,Cooking Oil 750ml (Sunfoil),Groceries,58.78,82.31,28.6,56,0,56,2025-06-24,2025-07-09,169,184,9.13,0.0,0.0,0.0,fast,Slow Moving (3-6 months),33.8,Discount / Promote
+SPZ-GRO-0005,Cooking Oil 2L (Golden Fry),Groceries,85.07,103.44,17.8,34,0,34,2025-01-22,2025-03-09,291,337,3.03,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0006,Sugar 2kg (White),Groceries,107.08,143.79,25.5,61,0,61,2025-03-06,2025-03-28,272,294,6.22,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0007,Sugar 1kg (Brown),Groceries,84.21,111.91,24.8,53,0,53,2025-08-21,2025-11-30,25,126,12.62,0.0,0.0,0.0,medium,Active (< 1 month),5.0,Restock When Low
+SPZ-GRO-0008,Rice 2kg (Tastic),Groceries,93.34,121.56,23.2,94,0,94,2025-05-26,2025-06-21,187,213,13.24,0.0,0.0,0.0,fast,Dead Stock (6+ months),37.4,Clearance Sale / Bundle
+SPZ-GRO-0009,Rice 1kg (Spekko),Groceries,81.89,117.43,30.3,84,0,84,2025-09-21,2025-10-11,75,95,26.53,0.0,0.0,0.0,fast,Moderate (1-3 months),15.0,Monitor Weekly
+SPZ-GRO-0010,Flour 2.5kg (Snowflake),Groceries,32.66,38.25,14.6,24,0,24,2025-04-21,2025-05-22,217,248,2.9,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0011,Salt 500g (Cerebos),Groceries,68.39,93.49,26.8,40,40,0,2025-05-21,2025-05-21,218,218,0.0,2735.6,3739.6,397.57,dead,Dead Stock (6+ months),100.0,Clearance Sale / Bundle
+SPZ-GRO-0012,Tea 100 bags (Five Roses),Groceries,60.97,77.56,21.4,75,0,75,2025-08-02,2025-08-22,125,145,15.52,0.0,0.0,0.0,fast,Slow Moving (3-6 months),25.0,Discount / Promote
+SPZ-GRO-0013,Tea 50 bags (Joko),Groceries,68.06,81.13,16.1,61,0,61,2025-08-18,2025-09-10,106,129,14.19,0.0,0.0,0.0,fast,Slow Moving (3-6 months),21.2,Discount / Promote
+SPZ-GRO-0014,Coffee 200g (Ricoffy),Groceries,95.93,118.53,19.1,31,22,9,2025-10-05,2025-12-09,16,81,3.33,2110.46,2607.66,113.96,slow,Active (< 1 month),63.2,Restock When Low
+SPZ-GRO-0015,Beans 410g (KOO),Groceries,14.4,19.08,24.5,30,0,30,2025-09-22,2025-11-04,51,94,9.57,0.0,0.0,0.0,medium,Moderate (1-3 months),10.2,Monitor Weekly
+SPZ-GRO-0016,Pilchards 400g (Lucky Star),Groceries,21.43,30.37,29.4,40,0,40,2025-01-14,2025-01-24,335,345,3.48,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0017,Chakalaka 410g (KOO),Groceries,22.66,30.45,25.6,20,0,20,2025-01-31,2025-03-04,296,328,1.83,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0018,Tomato Sauce 700ml (All Gold),Groceries,37.7,53.91,30.1,33,33,0,2025-02-25,2025-02-25,303,303,0.0,1244.1,1779.03,251.31,dead,Dead Stock (6+ months),100.0,Clearance Sale / Bundle
+SPZ-GRO-0019,Peanut Butter 400g (Black Cat),Groceries,57.08,74.94,23.8,20,0,20,2025-09-21,2025-11-06,49,95,6.32,0.0,0.0,0.0,medium,Moderate (1-3 months),9.8,Monitor Weekly
+SPZ-GRO-0020,Jam 450g (Fynbos),Groceries,91.15,109.07,16.4,73,0,73,2025-04-11,2025-04-22,247,258,8.49,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-GRO-0021,Milk Powder 400g (Nespray),Groceries,26.1,33.47,22.0,10,6,4,2025-10-08,2025-12-19,6,78,1.54,156.6,200.82,8.14,slow,Active (< 1 month),11.2,Restock When Low
+SPZ-GRO-0022,Custard 500g (Ultramel),Groceries,12.68,15.97,20.6,32,32,0,2025-01-04,2025-01-04,355,355,0.0,405.76,511.04,96.03,dead,Dead Stock (6+ months),90.0,Clearance Sale / Bundle
+SPZ-BEV-0023,Coca Cola 2L (Coke),Beverages,12.49,14.75,15.3,29,10,19,2025-07-21,2025-12-16,9,157,3.63,124.9,147.5,9.8,slow,Active (< 1 month),11.8,Restock When Low
+SPZ-BEV-0024,Coca Cola 500ml (Coke),Beverages,6.16,7.95,22.5,74,0,74,2025-08-17,2025-09-05,111,130,17.08,0.0,0.0,0.0,fast,Slow Moving (3-6 months),22.2,Discount / Promote
+SPZ-BEV-0025,Fanta Orange 2L (Fanta),Beverages,34.43,45.13,23.7,26,26,0,2025-01-23,2025-01-23,336,336,0.0,895.18,1173.38,150.39,dead,Dead Stock (6+ months),100.0,Clearance Sale / Bundle
+SPZ-BEV-0026,Sprite 500ml (Sprite),Beverages,33.88,41.66,18.7,74,0,74,2025-08-04,2025-08-27,120,143,15.52,0.0,0.0,0.0,fast,Slow Moving (3-6 months),24.0,Discount / Promote
+SPZ-BEV-0027,Oros 2L (Orange),Beverages,30.44,41.58,26.8,46,0,46,2025-06-01,2025-09-03,113,207,6.67,0.0,0.0,0.0,medium,Slow Moving (3-6 months),22.6,Discount / Promote
+SPZ-BEV-0028,Oros 2L (Tropical),Beverages,13.61,17.41,21.8,49,0,49,2025-06-07,2025-09-18,98,201,7.31,0.0,0.0,0.0,medium,Slow Moving (3-6 months),19.6,Discount / Promote
+SPZ-BEV-0029,Mazoe 2L (Orange),Beverages,14.31,19.92,28.2,61,0,61,2025-01-17,2025-01-24,335,342,5.35,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-BEV-0030,Juice 1L (Ceres Apple),Beverages,19.83,24.26,18.3,38,0,38,2024-12-27,2025-10-04,82,363,3.14,0.0,0.0,0.0,slow,Moderate (1-3 months),16.4,Monitor Weekly
+SPZ-BEV-0031,Juice 1L (Liqui Fruit),Beverages,30.2,37.24,18.9,30,14,16,2025-08-30,2025-12-10,15,117,4.1,422.8,521.36,24.73,slow,Active (< 1 month),43.0,Restock When Low
+SPZ-BEV-0032,Water 500ml (Bonaqua),Beverages,17.23,22.62,23.8,46,0,46,2025-04-09,2025-06-20,188,260,5.31,0.0,0.0,0.0,medium,Dead Stock (6+ months),37.6,Clearance Sale / Bundle
+SPZ-BEV-0033,Water 5L (Aquartz),Beverages,27.43,36.04,23.9,51,0,51,2025-04-16,2025-06-30,178,253,6.05,0.0,0.0,0.0,medium,Slow Moving (3-6 months),35.6,Discount / Promote
+SPZ-BEV-0034,Energy Drink (Score),Beverages,5.81,7.37,21.2,25,0,25,2025-01-07,2025-02-25,303,352,2.13,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-BEV-0035,Energy Drink (Red Bull),Beverages,29.96,36.72,18.4,99,0,99,2025-01-03,2025-01-11,348,356,8.34,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-BEV-0036,Milk 1L (Clover Fresh),Beverages,18.95,23.25,18.5,30,0,30,2025-02-21,2025-04-16,253,307,2.93,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-BEV-0037,Milk 1L (Steri Stumpie),Beverages,29.92,36.59,18.2,37,10,27,2025-05-28,2025-12-11,14,211,3.84,299.2,365.9,31.57,slow,Active (< 1 month),42.8,Restock When Low
+SPZ-BEV-0038,Yoghurt 1kg (Danone),Beverages,32.59,45.05,27.7,40,0,40,2025-05-11,2025-07-12,166,228,5.26,0.0,0.0,0.0,medium,Slow Moving (3-6 months),33.2,Discount / Promote
+SPZ-SNA-0039,Chips 125g (Simba Chutney),Snacks,13.73,17.25,20.4,65,0,65,2025-05-17,2025-06-01,207,222,8.78,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-SNA-0040,Chips 125g (Lays Salt),Snacks,12.86,14.86,13.5,61,0,61,2025-07-20,2025-07-31,147,158,11.58,0.0,0.0,0.0,fast,Slow Moving (3-6 months),29.4,Discount / Promote
+SPZ-SNA-0041,Chips 36g (Nik Naks),Snacks,10.74,13.81,22.2,27,0,27,2025-04-22,2025-07-07,171,247,3.28,0.0,0.0,0.0,medium,Slow Moving (3-6 months),34.2,Discount / Promote
+SPZ-SNA-0042,Chips 125g (Doritos),Snacks,9.23,10.89,15.2,76,0,76,2025-04-20,2025-05-05,234,249,9.16,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-SNA-0043,Biscuits (Marie),Snacks,13.53,16.94,20.1,40,37,3,2025-02-27,2025-04-17,252,301,0.3,500.61,626.78,50.23,dead,Dead Stock (6+ months),100.0,Clearance Sale / Bundle
+SPZ-SNA-0044,Biscuits (Tennis),Snacks,18.1,21.64,16.4,12,0,12,2025-05-29,2025-08-18,129,210,1.71,0.0,0.0,0.0,slow,Slow Moving (3-6 months),25.8,Discount / Promote
+SPZ-SNA-0045,Biscuits (Romany Creams),Snacks,9.72,12.99,25.2,33,0,33,2025-02-13,2025-04-02,267,315,3.14,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-SNA-0046,Biscuits (Oreos),Snacks,9.22,12.98,29.0,63,0,63,2025-04-23,2025-05-05,234,246,7.68,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-SNA-0047,Chocolate (Cadbury Dairy Milk),Snacks,19.48,25.73,24.3,89,0,89,2025-02-26,2025-03-16,284,302,8.84,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-SNA-0048,Chocolate (Bar One),Snacks,8.93,10.38,14.0,26,9,17,2025-08-22,2025-12-06,19,125,4.08,80.37,93.42,3.35,slow,Active (< 1 month),13.8,Restock When Low
+SPZ-SNA-0049,Chocolate (KitKat),Snacks,10.06,11.88,15.3,93,0,93,2025-07-23,2025-08-12,135,155,18.0,0.0,0.0,0.0,fast,Slow Moving (3-6 months),27.0,Discount / Promote
+SPZ-SNA-0050,Sweets (Jelly Babies),Snacks,19.64,26.27,25.2,18,0,18,2025-04-08,2025-09-09,107,261,2.07,0.0,0.0,0.0,slow,Slow Moving (3-6 months),21.4,Discount / Promote
+SPZ-SNA-0051,Sweets (Wine Gums),Snacks,5.05,7.31,30.9,17,17,0,2025-04-22,2025-04-22,247,247,0.0,85.85,124.27,7.07,dead,Dead Stock (6+ months),50.0,Clearance Sale / Bundle
+SPZ-SNA-0052,Sweets (Chappies),Snacks,6.39,9.14,30.1,83,0,83,2025-05-13,2025-06-07,201,226,11.02,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-SNA-0053,Popcorn (Act II),Snacks,17.52,24.7,29.1,42,0,42,2025-08-29,2025-11-14,41,118,10.68,0.0,0.0,0.0,medium,Moderate (1-3 months),8.2,Monitor Weekly
+SPZ-SNA-0054,Nuts 100g (Peanuts Salted),Snacks,23.1,29.21,20.9,19,19,0,2025-06-09,2025-06-09,199,199,0.0,438.9,554.99,29.11,dead,Dead Stock (6+ months),79.8,Clearance Sale / Bundle
+SPZ-SNA-0055,Dried Fruit (Safari Mix),Snacks,3.81,4.96,23.2,48,0,48,2025-02-14,2025-05-01,238,314,4.59,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-PER-0056,Soap (Sunlight Bar),Personal Care,81.65,109.25,25.3,44,43,1,2025-04-28,2025-06-16,192,241,0.12,3510.95,4697.75,338.46,dead,Dead Stock (6+ months),98.4,Clearance Sale / Bundle
+SPZ-PER-0057,Soap (Lux),Personal Care,79.23,114.82,31.0,13,0,13,2025-08-04,2025-12-18,7,143,2.73,0.0,0.0,0.0,slow,Active (< 1 month),1.4,Restock When Low
+SPZ-PER-0058,Soap (Dettol),Personal Care,22.63,29.63,23.6,30,0,30,2025-03-27,2025-05-30,209,273,3.3,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-PER-0059,Toothpaste 100ml (Colgate),Personal Care,30.54,37.46,18.5,66,0,66,2025-08-20,2025-09-12,104,127,15.59,0.0,0.0,0.0,fast,Slow Moving (3-6 months),20.8,Discount / Promote
+SPZ-PER-0060,Toothpaste 50ml (Aquafresh),Personal Care,63.05,72.92,13.5,18,3,15,2025-07-15,2025-11-30,25,163,2.76,189.15,218.76,12.33,slow,Active (< 1 month),25.0,Restock When Low
+SPZ-PER-0061,Lotion 400ml (Vaseline),Personal Care,57.86,82.22,29.6,48,0,48,2025-06-01,2025-08-16,131,207,6.96,0.0,0.0,0.0,medium,Slow Moving (3-6 months),26.2,Discount / Promote
+SPZ-PER-0062,Lotion 200ml (Dawn),Personal Care,24.01,34.2,29.8,31,31,0,2025-03-10,2025-03-10,290,290,0.0,744.31,1060.2,86.34,dead,Dead Stock (6+ months),100.0,Clearance Sale / Bundle
+SPZ-PER-0063,Petroleum Jelly 250ml (Vaseline),Personal Care,46.19,54.16,14.7,37,5,32,2025-04-19,2025-12-16,9,250,3.84,230.95,270.8,23.09,slow,Active (< 1 month),41.8,Restock When Low
+SPZ-PER-0064,Deodorant (Shield),Personal Care,80.85,100.93,19.9,60,0,60,2025-01-26,2025-05-20,219,333,5.41,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-PER-0065,Deodorant (Axe),Personal Care,19.23,24.94,22.9,22,0,22,2025-05-17,2025-07-18,160,222,2.97,0.0,0.0,0.0,medium,Slow Moving (3-6 months),32.0,Discount / Promote
+SPZ-PER-0066,Shampoo 400ml (Sunsilk),Personal Care,38.18,48.47,21.2,88,0,88,2025-02-25,2025-03-15,285,303,8.71,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-PER-0067,Body Wash 400ml (Dettol),Personal Care,51.44,71.48,28.0,46,0,46,2025-01-07,2025-01-16,343,352,3.92,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-PER-0068,Roll-on (Nivea),Personal Care,16.64,21.37,22.1,48,0,48,2025-02-18,2025-06-17,191,310,4.65,0.0,0.0,0.0,medium,Dead Stock (6+ months),38.2,Clearance Sale / Bundle
+SPZ-PER-0069,Face Cream (Pond's),Personal Care,56.41,65.98,14.5,100,0,100,2025-10-20,2025-11-26,29,66,45.45,0.0,0.0,0.0,fast,Active (< 1 month),5.8,Restock When Low
+SPZ-PER-0070,Hair Food (Sta Sof Fro),Personal Care,81.61,110.67,26.3,25,0,25,2025-02-09,2025-04-02,267,319,2.35,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-PER-0071,Sanitary Pads (Always),Personal Care,60.91,77.55,21.5,13,13,0,2025-04-12,2025-04-12,257,257,0.0,791.83,1008.15,81.4,dead,Dead Stock (6+ months),100.0,Clearance Sale / Bundle
+SPZ-HOU-0072,Candles 6 pack (White),Household,42.22,53.01,20.4,29,0,29,2025-04-12,2025-05-20,219,257,3.39,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-HOU-0073,Matches Box (Lion),Household,32.46,42.79,24.1,10,0,10,2025-10-06,2025-12-02,23,80,3.75,0.0,0.0,0.0,slow,Active (< 1 month),4.6,Restock When Low
+SPZ-HOU-0074,Washing Powder 1kg (Omo),Household,28.01,33.74,17.0,38,0,38,2025-07-18,2025-07-30,148,160,7.12,0.0,0.0,0.0,fast,Slow Moving (3-6 months),29.6,Discount / Promote
+SPZ-HOU-0075,Washing Powder 2kg (Sunlight),Household,29.09,39.75,26.8,29,25,4,2025-10-11,2025-12-10,15,75,1.6,727.25,993.75,14.55,slow,Active (< 1 month),43.0,Restock When Low
+SPZ-HOU-0076,Dish Soap 750ml (Sunlight),Household,35.68,45.76,22.0,44,0,44,2025-09-13,2025-09-29,87,103,12.82,0.0,0.0,0.0,fast,Moderate (1-3 months),17.4,Monitor Weekly
+SPZ-HOU-0077,Bleach 750ml (Jik),Household,61.88,85.41,27.5,20,1,19,2025-05-22,2025-12-01,24,217,2.63,61.88,85.41,3.58,slow,Active (< 1 month),14.8,Restock When Low
+SPZ-HOU-0078,Floor Polish 750ml (Cobra),Household,48.44,61.78,21.6,71,0,71,2025-01-04,2025-01-11,348,355,6.0,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-HOU-0079,Air Freshener (Airoma),Household,21.87,29.01,24.6,39,0,39,2025-07-15,2025-10-09,77,163,7.18,0.0,0.0,0.0,medium,Moderate (1-3 months),15.4,Monitor Weekly
+SPZ-HOU-0080,Toilet Paper 2pk (Twinsaver),Household,16.42,19.39,15.3,49,0,49,2025-03-23,2025-04-04,265,277,5.31,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-HOU-0081,Paper Towels (Checkers),Household,33.07,42.68,22.5,57,0,57,2025-05-14,2025-09-06,110,225,7.6,0.0,0.0,0.0,medium,Slow Moving (3-6 months),22.0,Discount / Promote
+SPZ-HOU-0082,Refuse Bags 20s (Black),Household,40.58,48.96,17.1,29,0,29,2025-09-07,2025-10-09,77,109,7.98,0.0,0.0,0.0,medium,Moderate (1-3 months),15.4,Monitor Weekly
+SPZ-HOU-0083,Sponge Scourers (Scrub),Household,10.23,13.94,26.6,43,43,0,2025-05-08,2025-05-08,231,231,0.0,439.89,599.42,27.1,dead,Dead Stock (6+ months),80.0,Clearance Sale / Bundle
+SPZ-HOU-0084,Steel Wool (Brillo),Household,28.74,40.97,29.9,58,0,58,2025-06-16,2025-09-26,90,192,9.06,0.0,0.0,0.0,medium,Moderate (1-3 months),18.0,Monitor Weekly
+SPZ-HOU-0085,Insect Spray (Doom),Household,63.16,85.87,26.4,39,0,39,2025-02-06,2025-04-12,257,322,3.63,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-HOU-0086,Batteries AA 4pk (Eveready),Household,13.33,18.01,26.0,43,0,43,2025-01-03,2025-02-11,317,356,3.62,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-AIR-0087,Airtime P5 (Mascom),Airtime & Essentials,56.28,77.19,27.1,83,0,83,2025-06-15,2025-07-04,174,193,12.9,0.0,0.0,0.0,fast,Slow Moving (3-6 months),34.8,Discount / Promote
+SPZ-AIR-0088,Airtime P10 (Mascom),Airtime & Essentials,90.88,109.8,17.2,162,0,162,2025-10-13,2025-11-07,48,73,66.58,0.0,0.0,0.0,fast,Moderate (1-3 months),9.6,Monitor Weekly
+SPZ-AIR-0089,Airtime P25 (Mascom),Airtime & Essentials,52.69,64.32,18.1,34,0,34,2025-07-04,2025-08-19,128,174,5.86,0.0,0.0,0.0,medium,Slow Moving (3-6 months),25.6,Discount / Promote
+SPZ-AIR-0090,Airtime P50 (Mascom),Airtime & Essentials,5.5,6.46,14.9,190,0,190,2025-03-11,2025-04-14,255,289,19.72,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-AIR-0091,Airtime P5 (Orange),Airtime & Essentials,27.91,37.6,25.8,135,0,135,2025-10-18,2025-11-09,46,68,59.56,0.0,0.0,0.0,fast,Moderate (1-3 months),9.2,Monitor Weekly
+SPZ-AIR-0092,Airtime P10 (Orange),Airtime & Essentials,32.18,45.33,29.0,119,0,119,2025-06-12,2025-07-04,174,196,18.21,0.0,0.0,0.0,fast,Slow Moving (3-6 months),34.8,Discount / Promote
+SPZ-AIR-0093,Airtime P25 (Orange),Airtime & Essentials,14.75,18.41,19.9,159,0,159,2025-08-10,2025-09-08,108,137,34.82,0.0,0.0,0.0,fast,Slow Moving (3-6 months),21.6,Discount / Promote
+SPZ-AIR-0094,Airtime P10 (BTC),Airtime & Essentials,47.74,60.21,20.7,196,0,196,2025-02-02,2025-03-10,290,326,18.04,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-AIR-0095,Data Bundle P20 (Mascom),Airtime & Essentials,26.3,38.02,30.8,51,0,51,2025-04-25,2025-07-03,175,244,6.27,0.0,0.0,0.0,medium,Slow Moving (3-6 months),35.0,Discount / Promote
+SPZ-AIR-0096,Data Bundle P50 (Mascom),Airtime & Essentials,49.25,64.28,23.4,200,0,200,2025-10-03,2025-11-11,44,83,72.29,0.0,0.0,0.0,fast,Moderate (1-3 months),8.8,Monitor Weekly
+SPZ-AIR-0097,Electricity Voucher (BPC),Airtime & Essentials,81.7,103.91,21.4,90,0,90,2025-01-24,2025-02-14,314,335,8.06,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-AIR-0098,Prepaid Water (WUC),Airtime & Essentials,14.2,17.57,19.2,113,0,113,2025-07-27,2025-08-23,124,151,22.45,0.0,0.0,0.0,fast,Slow Moving (3-6 months),24.8,Discount / Promote
+SPZ-BRE-0099,Bread White (Albany),Bread & Bakery,18.89,21.98,14.1,54,0,54,2025-10-08,2025-10-18,68,78,20.77,0.0,0.0,0.0,fast,Moderate (1-3 months),13.6,Monitor Weekly
+SPZ-BRE-0100,Bread Brown (Albany),Bread & Bakery,11.21,16.17,30.7,76,0,76,2025-06-16,2025-07-05,173,192,11.88,0.0,0.0,0.0,fast,Slow Moving (3-6 months),34.6,Discount / Promote
+SPZ-BRE-0101,Bread White (Blue Ribbon),Bread & Bakery,30.36,39.76,23.6,50,0,50,2025-05-27,2025-07-03,175,212,7.08,0.0,0.0,0.0,medium,Slow Moving (3-6 months),35.0,Discount / Promote
+SPZ-BRE-0102,Bread Whole Wheat (Sasko),Bread & Bakery,23.62,28.78,17.9,51,0,51,2025-08-27,2025-09-12,104,120,12.75,0.0,0.0,0.0,fast,Slow Moving (3-6 months),20.8,Discount / Promote
+SPZ-BRE-0103,Rolls 6 pack (Hot Dog),Bread & Bakery,27.06,35.33,23.4,97,0,97,2025-08-26,2025-09-15,101,121,24.05,0.0,0.0,0.0,fast,Slow Moving (3-6 months),20.2,Discount / Promote
+SPZ-BRE-0104,Scones 6 pack (Fresh),Bread & Bakery,16.56,20.78,20.3,38,0,38,2025-05-14,2025-07-05,173,225,5.07,0.0,0.0,0.0,medium,Slow Moving (3-6 months),34.6,Discount / Promote
+SPZ-BRE-0105,Vetkoek 4 pack (Fresh),Bread & Bakery,22.54,32.23,30.1,43,0,43,2025-03-05,2025-03-14,286,295,4.37,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-BRE-0106,Fat Cakes 6 pack (Homemade),Bread & Bakery,11.71,16.85,30.5,46,0,46,2025-03-15,2025-04-26,243,285,4.84,0.0,0.0,0.0,medium,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-TOB-0107,Cigarettes (Peter Stuyvesant),Tobacco & Extras,76.52,108.96,29.8,34,0,34,2025-03-25,2025-04-07,262,275,3.71,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-TOB-0108,Cigarettes (Dunhill),Tobacco & Extras,40.65,58.81,30.9,28,0,28,2025-09-03,2025-10-17,69,113,7.43,0.0,0.0,0.0,medium,Moderate (1-3 months),13.8,Monitor Weekly
+SPZ-TOB-0109,Cigarettes (Rothmans),Tobacco & Extras,35.24,48.31,27.1,32,0,32,2025-10-11,2025-12-03,22,75,12.8,0.0,0.0,0.0,medium,Active (< 1 month),4.4,Restock When Low
+SPZ-TOB-0110,Cigarettes (Pacific),Tobacco & Extras,38.64,47.46,18.6,72,0,72,2025-05-10,2025-05-30,209,229,9.43,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-TOB-0111,Loose Tobacco (Boxer),Tobacco & Extras,31.46,44.83,29.8,58,0,58,2025-04-17,2025-04-30,239,252,6.9,0.0,0.0,0.0,fast,Dead Stock (6+ months),40.0,Clearance Sale / Bundle
+SPZ-TOB-0112,Rolling Paper (Rizla),Tobacco & Extras,38.61,53.14,27.3,26,0,26,2025-02-04,2025-10-01,85,324,2.41,0.0,0.0,0.0,slow,Moderate (1-3 months),17.0,Monitor Weekly
+SPZ-TOB-0113,Lighters 3pk (Bic),Tobacco & Extras,53.23,68.51,22.3,69,0,69,2025-08-18,2025-09-09,107,129,16.05,0.0,0.0,0.0,fast,Slow Moving (3-6 months),21.4,Discount / Promote
