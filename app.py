@@ -251,14 +251,14 @@ def generate_spaza_inventory(num_products=120, seed=42):
 
 # ============== DASH APP ==============
 
-app = dash.Dash(
+dash_app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1.0"}]
 )
 
 # IMPORTANT: Expose server for Vercel
-server = app.server
+server = dash_app.server
 
 # Colors
 COLORS = {
@@ -293,7 +293,7 @@ SECTION_HEADER_STYLE = {
 
 # ============== LAYOUT ==============
 
-app.layout = html.Div([
+dash_app.layout = html.Div([
     # Nav
     html.Nav([
         html.Div([
@@ -419,7 +419,7 @@ def create_priority_table(df):
 
 # ============== CALLBACK ==============
 
-@app.callback(
+@dash_app.callback(
     [Output('inventory-data', 'data'), Output('upload-status', 'children'), Output('dashboard-content', 'style'), Output('dashboard-content', 'children')],
     [Input('upload-data', 'contents'), Input('load-sample', 'n_clicks')],
     [State('upload-data', 'filename')]
@@ -467,4 +467,4 @@ def update_dashboard(contents, n_clicks, filename):
 
 if __name__ == '__main__':
     # Only runs locally, not on Vercel
-    app.run_server(debug=True, port=8050)
+    dash_app.run_server(debug=True, port=8050)
