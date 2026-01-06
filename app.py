@@ -464,7 +464,8 @@ def update_dashboard(contents, n_clicks, filename):
 # ============== FOR VERCEL ==============
 # The 'server' variable is what Vercel needs
 # Do NOT call app.run_server() on Vercel
+app = dash_app.server
 
 if __name__ == '__main__':
     # Only runs locally, not on Vercel
-    dash_app.server(debug=True, port=8050)
+    dash_app.run_server(debug=True, port=8050)
